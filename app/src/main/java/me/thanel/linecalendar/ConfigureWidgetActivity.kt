@@ -12,8 +12,6 @@ import android.support.v4.content.CursorLoader
 import android.support.v4.content.Loader
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.view.Menu
-import android.view.MenuItem
 import com.github.florent37.runtimepermission.kotlin.askPermission
 import kotlinx.android.synthetic.main.activity_configure_widget.*
 import me.thanel.linecalendar.calendar.CalendarAdapter
@@ -29,42 +27,32 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_configure_widget)
 
-        calendarsRecyclerView.layoutManager = LinearLayoutManager(this)
-        calendarsRecyclerView.adapter = adapter
-
         appWidgetId = intent.getIntExtra(
             AppWidgetManager.EXTRA_APPWIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID
         )
+        if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+            finish()
+            return
+        }
         preferences = WidgetPreferences(this, appWidgetId)
-
         setWidgetResult(Activity.RESULT_CANCELED)
+
+        calendarsRecyclerView.layoutManager = LinearLayoutManager(this)
+        calendarsRecyclerView.adapter = adapter
+
+        applySettingsButton.setOnClickListener {
+            preferences.saveSelectedCalendars(adapter.getSelectedCalendars())
+            updateWidget()
+            setWidgetResult(Activity.RESULT_OK)
+            finish()
+        }
 
         askPermission(Manifest.permission.READ_CALENDAR) {
             supportLoaderManager.initLoader(0, null, this)
         }.onDeclined {
             TODO("Permission declined")
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.configure_menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.apply -> {
-                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-                    preferences.saveSelectedCalendars(adapter.getSelectedCalendars())
-                    updateWidget()
-                    setWidgetResult(Activity.RESULT_OK)
-                }
-                finish()
-            }
-            else -> return super.onOptionsItemSelected(item)
-        }
-        return true
     }
 
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
