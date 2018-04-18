@@ -118,5 +118,6 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
     private fun updateWidget() {
         val appWidgetManager = AppWidgetManager.getInstance(this)
         CalendarAppWidgetProvider.updateWidget(this, appWidgetManager, appWidgetId)
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.events_list_view)
     }
 }
