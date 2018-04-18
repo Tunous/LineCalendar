@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.RemoteViews
+import me.thanel.linecalendar.preference.WidgetPreferences
 
 class CalendarAppWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(
@@ -15,6 +16,19 @@ class CalendarAppWidgetProvider : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         for (appWidgetId in appWidgetIds) {
+            updateWidget(context, appWidgetManager, appWidgetId)
+        }
+    }
+
+    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        for (appWidgetId in appWidgetIds) {
+            val prefs = WidgetPreferences(context, appWidgetId)
+            prefs.clear()
+        }
+    }
+
+    companion object {
+        fun updateWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
             val views = RemoteViews(context.packageName, R.layout.widget_calendar)
             views.setEmptyView(R.id.events_list_view, R.id.empty_view)
 
@@ -30,6 +44,5 @@ class CalendarAppWidgetProvider : AppWidgetProvider() {
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
-        super.onUpdate(context, appWidgetManager, appWidgetIds)
     }
 }

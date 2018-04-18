@@ -15,13 +15,16 @@ import android.support.v4.graphics.drawable.DrawableCompat
 import android.text.format.DateUtils
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
+import me.thanel.linecalendar.preference.WidgetPreferences
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class CalendarRemoteViewsFactory(
-    private val context: Context
+    private val context: Context,
+    appWidgetId: Int
 ) : RemoteViewsService.RemoteViewsFactory {
+    private val preferences = WidgetPreferences(context, appWidgetId)
     private var cursor: Cursor? = null
 
     override fun onCreate() {
@@ -50,12 +53,19 @@ class CalendarRemoteViewsFactory(
 
         val startTime = System.currentTimeMillis()
         val endTime = startTime + TimeUnit.DAYS.toMillis(60)
+        val selectedCalendars = preferences.getSelectedCalendars()
+        val calendarIds = selectedCalendars.map { it.toString() }.toTypedArray()
+        val calendarsQuery = selectedCalendars.joinToString(
+            separator = ", ",
+            prefix = "${CalendarContract.Events.CALENDAR_ID} IN (",
+            postfix = ")"
+        ) { "?" }
 
         cursor = context.contentResolver.query(
             CalendarContract.Events.CONTENT_URI,
             EVENT_PROJECTION,
-            "${CalendarContract.Events.DTSTART} >= ? AND ${CalendarContract.Events.DTSTART} <= ?",
-            arrayOf(startTime.toString(), endTime.toString()),
+            "${CalendarContract.Events.DTSTART} >= ? AND ${CalendarContract.Events.DTSTART} <= ? AND $calendarsQuery",
+            arrayOf(startTime.toString(), endTime.toString(), *calendarIds),
             "${CalendarContract.Events.DTSTART} ASC"
         )
     }
@@ -106,7 +116,7 @@ class CalendarRemoteViewsFactory(
     }
 
     private fun createColoredCircle(@ColorInt color: Int): Bitmap {
-        val drawable = ContextCompat.getDrawable(context, R.drawable.circle)!!
+        val drawable = ContextCompat.getDrawable(context, R.drawable.circle_small)!!
         val bitmap = Bitmap.createBitmap(
             drawable.intrinsicWidth,
             drawable.intrinsicHeight,
