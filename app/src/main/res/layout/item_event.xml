@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/event_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="2dp"
+    tools:background="@android:color/black">
+
+    <ImageView
+        android:id="@+id/event_color_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/circle"
+        tools:tint="@android:color/holo_red_dark" />
+
+    <TextView
+        android:id="@+id/event_title_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="1"
+        android:ellipsize="marquee"
+        android:shadowColor="@android:color/black"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="4"
+        android:singleLine="true"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        tools:text="Title of the event" />
+
+    <TextView
+        android:id="@+id/event_time_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:maxWidth="200dp"
+        android:paddingEnd="1dp"
+        android:paddingStart="1dp"
+        android:shadowColor="@android:color/black"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="4"
+        android:textColor="@android:color/white"
+        tools:text="8 May, 18:00" />
+
+</LinearLayout>

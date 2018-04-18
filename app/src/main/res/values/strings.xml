@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">LineCalendar</string>
+    <string name="no_events">You have no events</string>
+</resources>
