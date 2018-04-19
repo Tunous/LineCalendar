@@ -3,11 +3,14 @@ package me.thanel.linecalendar
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.RemoteViews
 import me.thanel.linecalendar.preference.WidgetPreferences
+import me.thanel.linecalendar.util.hasGrantedCalendarPermission
+import me.thanel.linecalendar.widgetlist.WidgetListActivity
 
 class CalendarAppWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(
@@ -16,7 +19,30 @@ class CalendarAppWidgetProvider : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         for (appWidgetId in appWidgetIds) {
-            updateWidget(context, appWidgetManager, appWidgetId)
+            val views = RemoteViews(context.packageName, R.layout.widget_calendar)
+
+            val permissionGranted = context.hasGrantedCalendarPermission()
+            val emptyText = if (permissionGranted) R.string.no_events else R.string.grant_permission
+            views.setEmptyView(R.id.events_list_view, R.id.empty_view)
+            views.setTextViewText(R.id.empty_view, context.getString(emptyText))
+            if (!permissionGranted) {
+                val permissionIntent = WidgetListActivity.getIntent(context, true)
+                val pendingIntent =
+                    PendingIntent.getActivity(context, appWidgetId, permissionIntent, 0)
+                views.setOnClickPendingIntent(R.id.empty_view, pendingIntent)
+            }
+
+            val intent = Intent(context, CalendarWidgetService::class.java).apply {
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
+            }
+            views.setRemoteAdapter(R.id.events_list_view, intent)
+
+            val itemIntent = Intent(Intent.ACTION_VIEW)
+            val pendingIntent = PendingIntent.getActivity(context, appWidgetId, itemIntent, 0)
+            views.setPendingIntentTemplate(R.id.events_list_view, pendingIntent)
+
+            appWidgetManager.updateAppWidget(appWidgetId, views)
         }
     }
 
@@ -28,21 +54,22 @@ class CalendarAppWidgetProvider : AppWidgetProvider() {
     }
 
     companion object {
-        fun updateWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
-            val views = RemoteViews(context.packageName, R.layout.widget_calendar)
-            views.setEmptyView(R.id.events_list_view, R.id.empty_view)
+        private fun getWidgetIds(context: Context): IntArray {
+            return AppWidgetManager.getInstance(context)
+                .getAppWidgetIds(ComponentName(context, CalendarAppWidgetProvider::class.java))
+        }
 
-            val intent = Intent(context, CalendarWidgetService::class.java).apply {
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
+        fun updateEventList(context: Context, vararg appWidgetIds: Int = getWidgetIds(context)) {
+            AppWidgetManager.getInstance(context)
+                .notifyAppWidgetViewDataChanged(appWidgetIds, R.id.events_list_view)
+        }
+
+        fun updateAllWidgets(context: Context) {
+            val intent = Intent(context, CalendarAppWidgetProvider::class.java).apply {
+                action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, getWidgetIds(context))
             }
-            views.setRemoteAdapter(R.id.events_list_view, intent)
-
-            val itemIntent = Intent(Intent.ACTION_VIEW)
-            val pendingIntent = PendingIntent.getActivity(context, 0, itemIntent, 0)
-            views.setPendingIntentTemplate(R.id.events_list_view, pendingIntent)
-
-            appWidgetManager.updateAppWidget(appWidgetId, views)
+            context.sendBroadcast(intent)
         }
     }
 }

@@ -1,10 +1,8 @@
 package me.thanel.linecalendar
 
-import android.Manifest
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -16,6 +14,7 @@ import android.text.format.DateUtils
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import me.thanel.linecalendar.preference.WidgetPreferences
+import me.thanel.linecalendar.util.hasGrantedCalendarPermission
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -46,8 +45,7 @@ class CalendarRemoteViewsFactory(
         cursor?.close()
         cursor = null
 
-        val result = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR)
-        if (result == PackageManager.PERMISSION_DENIED) {
+        if (!context.hasGrantedCalendarPermission()) {
             return
         }
 

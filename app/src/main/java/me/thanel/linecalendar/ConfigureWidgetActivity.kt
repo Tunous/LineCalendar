@@ -3,8 +3,10 @@ package me.thanel.linecalendar
 import android.Manifest
 import android.app.Activity
 import android.appwidget.AppWidgetManager
+import android.content.Context
 import android.content.Intent
 import android.database.Cursor
+import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
 import android.support.v4.app.LoaderManager
@@ -31,12 +33,12 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
             AppWidgetManager.EXTRA_APPWIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID
         )
+        setWidgetResult(Activity.RESULT_CANCELED)
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish()
             return
         }
         preferences = WidgetPreferences(this, appWidgetId)
-        setWidgetResult(Activity.RESULT_CANCELED)
 
         calendarsRecyclerView.layoutManager = LinearLayoutManager(this)
         calendarsRecyclerView.adapter = adapter
@@ -49,9 +51,11 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         }
 
         askPermission(Manifest.permission.READ_CALENDAR) {
-            supportLoaderManager.initLoader(0, null, this)
-        }.onDeclined {
-            TODO("Permission declined")
+            if (it.isAccepted) {
+                supportLoaderManager.initLoader(0, null, this)
+            } else {
+                finish()
+            }
         }
     }
 
@@ -104,8 +108,15 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
     }
 
     private fun updateWidget() {
-        val appWidgetManager = AppWidgetManager.getInstance(this)
-        CalendarAppWidgetProvider.updateWidget(this, appWidgetManager, appWidgetId)
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.events_list_view)
+        CalendarAppWidgetProvider.updateAllWidgets(this)
+        CalendarAppWidgetProvider.updateEventList(this, appWidgetId)
+    }
+
+    companion object {
+        fun getIntent(context: Context, appWidgetId: Int): Intent =
+            Intent(context, ConfigureWidgetActivity::class.java).apply {
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
+            }
     }
 }
