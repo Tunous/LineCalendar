@@ -44,10 +44,10 @@ class CalendarAppWidgetProvider : AppWidgetProvider() {
         prefs: WidgetPreferences
     ) {
         if (!prefs.isHeaderEnabled) {
-            views.setViewVisibility(R.id.events_header, View.GONE)
+            views.setViewVisibility(R.id.eventsHeader, View.GONE)
             return
         }
-        views.setViewVisibility(R.id.events_header, View.VISIBLE)
+        views.setViewVisibility(R.id.eventsHeader, View.VISIBLE)
 
         val today = SimpleDateFormat("EEEE d MMMM", Locale.getDefault()).format(Date())
         views.setTextViewText(R.id.header_title, today)

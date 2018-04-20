@@ -14,8 +14,10 @@ import android.support.v4.content.CursorLoader
 import android.support.v4.content.Loader
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 import com.github.florent37.runtimepermission.kotlin.askPermission
 import kotlinx.android.synthetic.main.activity_configure_widget.*
+import kotlinx.android.synthetic.main.view_events_header.*
 import me.thanel.linecalendar.R
 import me.thanel.linecalendar.calendar.CalendarAdapter
 import me.thanel.linecalendar.calendar.CalendarData
@@ -41,18 +43,18 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         }
         preferences = WidgetPreferences(this, appWidgetId)
 
+        eventsHeader.visibility = if (preferences.isHeaderEnabled) View.VISIBLE else View.GONE
+
         headerEnabledSwitch.isChecked = preferences.isHeaderEnabled
         headerEnabledSwitch.setOnCheckedChangeListener { _, isChecked ->
-            preferences.isHeaderEnabled = isChecked
-            updateWidget()
+            eventsHeader.visibility = if (isChecked) View.VISIBLE else View.GONE
         }
 
         calendarsRecyclerView.layoutManager = LinearLayoutManager(this)
         calendarsRecyclerView.adapter = adapter
+        calendarsRecyclerView.isNestedScrollingEnabled = false
 
-        applySettingsButton.setOnClickListener {
-            savePreferences()
-            updateWidget()
+        finishFab.setOnClickListener {
             setWidgetResult(Activity.RESULT_OK)
             finish()
         }
@@ -64,6 +66,12 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
                 finish()
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        savePreferences()
+        updateWidget()
     }
 
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
@@ -122,6 +130,7 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
     private fun savePreferences() {
         preferences.saveSelectedCalendars(adapter.getSelectedCalendars())
         preferences.saveName(CalendarAppWidgetProvider.getWidgetIds(this).size)
+        preferences.isHeaderEnabled = headerEnabledSwitch.isChecked
     }
 
     companion object {
