@@ -20,6 +20,19 @@ class WidgetPreferences(context: Context, appWidgetId: Int) {
             .commit()
     }
 
+    fun getName(numWidgets: Int): String =
+        preferences.getString(getWidgetKey(KEY_NAME), "Widget $numWidgets")
+
+    fun saveName(numWidgets: Int): Boolean {
+        return if (!preferences.contains(getWidgetKey(KEY_NAME))) {
+            preferences.edit()
+                .putString(getWidgetKey(KEY_NAME), "Widget $numWidgets")
+                .commit()
+        } else {
+            true
+        }
+    }
+
     fun clear(): Boolean {
         val editor = preferences.edit()
         for ((key, _) in preferences.all) {
@@ -34,5 +47,6 @@ class WidgetPreferences(context: Context, appWidgetId: Int) {
 
     companion object {
         private const val KEY_SELECTED_CALENDARS = "selectedCalendars"
+        private const val KEY_NAME = "name"
     }
 }

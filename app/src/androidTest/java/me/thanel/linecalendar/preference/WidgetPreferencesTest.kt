@@ -53,6 +53,41 @@ class WidgetPreferencesTest {
     }
 
     @Test
+    fun getName_shouldReturnExistingName_whenNameIsSaved() {
+        sharedPreferences.edit()
+            .putString("appWidget1_name", "Widget 5")
+            .commit()
+        val prefs = WidgetPreferences(context, 1)
+        assertThat(prefs.getName(8), equalTo("Widget 5"))
+    }
+
+    @Test
+    fun getName_shouldReturnNameBasedOnNumber_whenNoNameIsSaved() {
+        val prefs = WidgetPreferences(context, 1)
+        assertThat(prefs.getName(3), equalTo("Widget 3"))
+    }
+
+    @Test
+    fun saveName_shouldSaveNameBasedOnNumber() {
+        val prefs = WidgetPreferences(context, 1)
+        assertThat(prefs.saveName(2), equalTo(true))
+
+        assertThat(sharedPreferences.getString("appWidget1_name", null), equalTo("Widget 2"))
+    }
+
+    @Test
+    fun saveName_shouldNotOverrideExistingName() {
+        sharedPreferences.edit()
+            .putString("appWidget1_name", "Widget 1")
+            .commit()
+
+        val prefs = WidgetPreferences(context, 1)
+        assertThat(prefs.saveName(2), equalTo(true))
+
+        assertThat(sharedPreferences.getString("appWidget1_name", null), equalTo("Widget 1"))
+    }
+
+    @Test
     fun clear_shouldRemoveWidgetPreferences() {
         sharedPreferences.edit()
             .putInt("appWidget1_pref", 1)

@@ -61,7 +61,7 @@ class CalendarAppWidgetProvider : AppWidgetProvider() {
     }
 
     companion object {
-        private fun getWidgetIds(context: Context): IntArray {
+        fun getWidgetIds(context: Context): IntArray {
             return AppWidgetManager.getInstance(context)
                 .getAppWidgetIds(ComponentName(context, CalendarAppWidgetProvider::class.java))
         }

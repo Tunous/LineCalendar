@@ -22,12 +22,7 @@ class WidgetListAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val widgetInfo = getItem(position)
         holder.appWidgetId = widgetInfo.id
-        holder.widgetItemNameView.text = holder.itemView.context.getString(
-            R.string.widget_info,
-            widgetInfo.id,
-            widgetInfo.width,
-            widgetInfo.height
-        )
+        holder.widgetItemNameView.text = widgetInfo.name
     }
 
     class ViewHolder(

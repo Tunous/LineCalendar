@@ -45,7 +45,7 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         calendarsRecyclerView.adapter = adapter
 
         applySettingsButton.setOnClickListener {
-            preferences.saveSelectedCalendars(adapter.getSelectedCalendars())
+            savePreferences()
             updateWidget()
             setWidgetResult(Activity.RESULT_OK)
             finish()
@@ -110,10 +110,12 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
 
     private fun updateWidget() {
         CalendarAppWidgetProvider.updateAllWidgets(this)
-        CalendarAppWidgetProvider.updateEventList(
-            this,
-            appWidgetId
-        )
+        CalendarAppWidgetProvider.updateEventList(this, appWidgetId)
+    }
+
+    private fun savePreferences() {
+        preferences.saveSelectedCalendars(adapter.getSelectedCalendars())
+        preferences.saveName(CalendarAppWidgetProvider.getWidgetIds(this).size)
     }
 
     companion object {

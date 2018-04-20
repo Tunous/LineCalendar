@@ -2,8 +2,6 @@ package me.thanel.linecalendar.widgetlist
 
 import android.Manifest
 import android.app.Activity
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +11,7 @@ import android.view.View
 import com.github.florent37.runtimepermission.kotlin.askPermission
 import kotlinx.android.synthetic.main.activity_widget_list.*
 import me.thanel.linecalendar.R
+import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.util.hasGrantedCalendarPermission
 import me.thanel.linecalendar.widget.CalendarAppWidgetProvider
 import me.thanel.linecalendar.widget.ConfigureWidgetActivity
@@ -41,14 +40,10 @@ class WidgetListActivity : AppCompatActivity() {
 
         updateViewsVisibility(hasGrantedCalendarPermission())
 
-        val appWidgetManager = AppWidgetManager.getInstance(this)
-        val widgetProviderComponentName = ComponentName(this, CalendarAppWidgetProvider::class.java)
-        val widgetIds = appWidgetManager.getAppWidgetIds(widgetProviderComponentName)
+        val widgetIds = CalendarAppWidgetProvider.getWidgetIds(this)
+        val numWidgets = widgetIds.size
         val widgetInfos = widgetIds.map {
-            val options = appWidgetManager.getAppWidgetOptions(it)
-            val width = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
-            val height = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT)
-            WidgetInfo(it, width, height)
+            WidgetInfo(it, WidgetPreferences(this, it).getName(numWidgets))
         }
         adapter.submitList(widgetInfos)
     }
