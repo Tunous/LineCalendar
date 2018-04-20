@@ -22,4 +22,8 @@ class EnvironmentChangedReceiver : BroadcastReceiver() {
         }
         CalendarAppWidgetProvider.updateEventList(context)
     }
+
+    companion object {
+        const val ACTION_REFRESH = "me.thanel.linecalendar.action.REFRESH"
+    }
 }

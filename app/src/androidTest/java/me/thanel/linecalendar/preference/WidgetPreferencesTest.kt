@@ -88,6 +88,29 @@ class WidgetPreferencesTest {
     }
 
     @Test
+    fun isHeaderEnabled_shouldReturnSavedPreference() {
+        sharedPreferences.edit()
+            .putBoolean("appWidget1_headerEnabled", false)
+            .commit()
+        val prefs = WidgetPreferences(context, 1)
+        assertThat(prefs.isHeaderEnabled, equalTo(false))
+    }
+
+    @Test
+    fun isHeaderEnabled_shouldReturnTrueByDefault() {
+        val prefs = WidgetPreferences(context, 1)
+        assertThat(prefs.isHeaderEnabled, equalTo(true))
+    }
+
+    @Test
+    fun setHeaderEnabled_shouldSavePreference() {
+        val prefs = WidgetPreferences(context, 1)
+        prefs.isHeaderEnabled = false
+
+        assertThat(sharedPreferences.getBoolean("appWidget1_headerEnabled", true), equalTo(false))
+    }
+
+    @Test
     fun clear_shouldRemoveWidgetPreferences() {
         sharedPreferences.edit()
             .putInt("appWidget1_pref", 1)

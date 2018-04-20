@@ -41,6 +41,12 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         }
         preferences = WidgetPreferences(this, appWidgetId)
 
+        headerEnabledSwitch.isChecked = preferences.isHeaderEnabled
+        headerEnabledSwitch.setOnCheckedChangeListener { _, isChecked ->
+            preferences.isHeaderEnabled = isChecked
+            updateWidget()
+        }
+
         calendarsRecyclerView.layoutManager = LinearLayoutManager(this)
         calendarsRecyclerView.adapter = adapter
 

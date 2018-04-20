@@ -1,5 +1,6 @@
 package me.thanel.linecalendar.preference
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.preference.PreferenceManager
 
@@ -33,6 +34,15 @@ class WidgetPreferences(context: Context, appWidgetId: Int) {
         }
     }
 
+    var isHeaderEnabled: Boolean
+        get() = preferences.getBoolean(getWidgetKey(KEY_HEADER_ENABLED), true)
+        @SuppressLint("ApplySharedPref")
+        set(value) {
+            preferences.edit()
+                .putBoolean(getWidgetKey(KEY_HEADER_ENABLED), value)
+                .commit()
+        }
+
     fun clear(): Boolean {
         val editor = preferences.edit()
         for ((key, _) in preferences.all) {
@@ -48,5 +58,6 @@ class WidgetPreferences(context: Context, appWidgetId: Int) {
     companion object {
         private const val KEY_SELECTED_CALENDARS = "selectedCalendars"
         private const val KEY_NAME = "name"
+        private const val KEY_HEADER_ENABLED = "headerEnabled"
     }
 }

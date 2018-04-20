@@ -56,6 +56,10 @@
                 <data android:scheme="content" />
                 <data android:host="com.android.calendar" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="me.thanel.linecalendar.action.REFRESH" />
+            </intent-filter>
         </receiver>
 
         <service
