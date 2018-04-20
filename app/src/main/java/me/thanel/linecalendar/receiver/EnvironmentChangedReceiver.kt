@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import me.thanel.linecalendar.CalendarAppWidgetProvider
+import me.thanel.linecalendar.widget.CalendarAppWidgetProvider
 
 class EnvironmentChangedReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {

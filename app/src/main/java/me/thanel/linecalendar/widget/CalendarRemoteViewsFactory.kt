@@ -1,4 +1,4 @@
-package me.thanel.linecalendar
+package me.thanel.linecalendar.widget
 
 import android.annotation.SuppressLint
 import android.content.ContentUris
@@ -14,6 +14,7 @@ import android.support.v4.graphics.drawable.DrawableCompat
 import android.text.format.DateUtils
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
+import me.thanel.linecalendar.R
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.util.hasGrantedCalendarPermission
 import java.text.SimpleDateFormat
@@ -125,7 +126,10 @@ class CalendarRemoteViewsFactory(
     }
 
     private fun createColoredCircle(@ColorInt color: Int): Bitmap {
-        val drawable = ContextCompat.getDrawable(context, R.drawable.circle_small)!!
+        val drawable = ContextCompat.getDrawable(
+            context,
+            R.drawable.circle_small
+        )!!
         val bitmap = Bitmap.createBitmap(
             drawable.intrinsicWidth,
             drawable.intrinsicHeight,

@@ -5,7 +5,7 @@ import android.app.job.JobService
 import android.os.Build
 import android.support.annotation.RequiresApi
 import android.util.Log
-import me.thanel.linecalendar.CalendarAppWidgetProvider
+import me.thanel.linecalendar.widget.CalendarAppWidgetProvider
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 class CalendarObserverService : JobService() {

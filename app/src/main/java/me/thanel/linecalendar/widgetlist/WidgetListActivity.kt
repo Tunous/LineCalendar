@@ -12,10 +12,10 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.github.florent37.runtimepermission.kotlin.askPermission
 import kotlinx.android.synthetic.main.activity_widget_list.*
-import me.thanel.linecalendar.CalendarAppWidgetProvider
-import me.thanel.linecalendar.ConfigureWidgetActivity
 import me.thanel.linecalendar.R
 import me.thanel.linecalendar.util.hasGrantedCalendarPermission
+import me.thanel.linecalendar.widget.CalendarAppWidgetProvider
+import me.thanel.linecalendar.widget.ConfigureWidgetActivity
 
 class WidgetListActivity : AppCompatActivity() {
     private val adapter = WidgetListAdapter(::onWidgetClick)

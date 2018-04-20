@@ -1,4 +1,4 @@
-package me.thanel.linecalendar
+package me.thanel.linecalendar.widget
 
 import android.appwidget.AppWidgetManager
 import android.content.Intent
