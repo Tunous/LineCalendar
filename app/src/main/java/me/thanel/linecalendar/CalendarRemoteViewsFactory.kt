@@ -1,5 +1,6 @@
 package me.thanel.linecalendar
 
+import android.annotation.SuppressLint
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
@@ -17,7 +18,6 @@ import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.util.hasGrantedCalendarPermission
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 class CalendarRemoteViewsFactory(
     private val context: Context,
@@ -35,12 +35,13 @@ class CalendarRemoteViewsFactory(
 
     override fun getItemId(position: Int): Long {
         return if (cursor?.moveToPosition(position) == true) {
-            cursor!!.getLong(PROJECTION_ID_INDEX)
+            cursor!!.getLong(PROJECTION_EVENT_ID_INDEX)
         } else {
             position.toLong()
         }
     }
 
+    @SuppressLint("MissingPermission")
     override fun onDataSetChanged() {
         cursor?.close()
         cursor = null
@@ -49,22 +50,31 @@ class CalendarRemoteViewsFactory(
             return
         }
 
-        val startTime = System.currentTimeMillis()
-        val endTime = startTime + TimeUnit.DAYS.toMillis(60)
+        val startTime = Calendar.getInstance()
+        val startMillis = startTime.timeInMillis
+        val endTime = Calendar.getInstance().apply {
+            add(Calendar.DATE, 60)
+        }
+        val endMillis = endTime.timeInMillis
+
+        val builder = CalendarContract.Instances.CONTENT_URI.buildUpon()
+        ContentUris.appendId(builder, startMillis)
+        ContentUris.appendId(builder, endMillis)
+
         val selectedCalendars = preferences.getSelectedCalendars()
         val calendarIds = selectedCalendars.map { it.toString() }.toTypedArray()
-        val calendarsQuery = selectedCalendars.joinToString(
+        val selection = selectedCalendars.joinToString(
             separator = ", ",
             prefix = "${CalendarContract.Events.CALENDAR_ID} IN (",
             postfix = ")"
         ) { "?" }
 
         cursor = context.contentResolver.query(
-            CalendarContract.Events.CONTENT_URI,
+            builder.build(),
             EVENT_PROJECTION,
-            "${CalendarContract.Events.DTSTART} >= ? AND ${CalendarContract.Events.DTSTART} <= ? AND $calendarsQuery",
-            arrayOf(startTime.toString(), endTime.toString(), *calendarIds),
-            "${CalendarContract.Events.DTSTART} ASC"
+            selection,
+            calendarIds,
+            "${CalendarContract.Instances.BEGIN} ASC"
         )
     }
 
@@ -78,12 +88,13 @@ class CalendarRemoteViewsFactory(
         var color = 0xFFF
         var startTime = 0L
         var allDay = false
-        if (cursor?.moveToPosition(position) == true) {
-            eventId = cursor!!.getLong(PROJECTION_ID_INDEX)
-            title = cursor!!.getString(PROJECTION_TITLE_INDEX)
-            color = cursor!!.getInt(PROJECTION_DISPLAY_COLOR_INDEX)
-            startTime = cursor!!.getLong(PROJECTION_START_TIME_INDEX)
-            allDay = cursor!!.getInt(PROJECTION_ALL_DAY_INDEX) != 0
+        val localCursor = cursor
+        if (localCursor?.moveToPosition(position) == true) {
+            eventId = localCursor.getLong(PROJECTION_EVENT_ID_INDEX)
+            title = localCursor.getString(PROJECTION_TITLE_INDEX) ?: ""
+            color = localCursor.getInt(PROJECTION_DISPLAY_COLOR_INDEX)
+            startTime = localCursor.getLong(PROJECTION_START_TIME_INDEX)
+            allDay = localCursor.getInt(PROJECTION_ALL_DAY_INDEX) != 0
         }
 
         val timeText = if (allDay) {
@@ -147,13 +158,13 @@ class CalendarRemoteViewsFactory(
 
     companion object {
         private val EVENT_PROJECTION = arrayOf(
-            CalendarContract.Events._ID,
-            CalendarContract.Events.TITLE,
-            CalendarContract.Events.DISPLAY_COLOR,
-            CalendarContract.Events.DTSTART,
-            CalendarContract.Events.ALL_DAY
+            CalendarContract.Instances.EVENT_ID,
+            CalendarContract.Instances.TITLE,
+            CalendarContract.Instances.DISPLAY_COLOR,
+            CalendarContract.Instances.BEGIN,
+            CalendarContract.Instances.ALL_DAY
         )
-        private const val PROJECTION_ID_INDEX = 0
+        private const val PROJECTION_EVENT_ID_INDEX = 0
         private const val PROJECTION_TITLE_INDEX = 1
         private const val PROJECTION_DISPLAY_COLOR_INDEX = 2
         private const val PROJECTION_START_TIME_INDEX = 3
