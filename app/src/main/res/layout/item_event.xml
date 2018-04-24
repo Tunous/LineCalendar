@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/event_view"
+    android:id="@+id/eventView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
@@ -10,7 +10,7 @@
     tools:background="@android:color/black">
 
     <ImageView
-        android:id="@+id/event_color_icon"
+        android:id="@+id/eventColorIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -18,7 +18,7 @@
         tools:tint="@android:color/holo_red_dark" />
 
     <TextView
-        android:id="@+id/event_title_view"
+        android:id="@+id/eventTitleView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -34,7 +34,7 @@
         tools:text="Title of the event" />
 
     <TextView
-        android:id="@+id/event_time_view"
+        android:id="@+id/eventTimeView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="end"

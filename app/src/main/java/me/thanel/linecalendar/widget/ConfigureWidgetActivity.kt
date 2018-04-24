@@ -18,6 +18,7 @@ import android.view.View
 import com.github.florent37.runtimepermission.kotlin.askPermission
 import kotlinx.android.synthetic.main.activity_configure_widget.*
 import kotlinx.android.synthetic.main.view_events_header.*
+import kotlinx.android.synthetic.main.widget_calendar.*
 import me.thanel.linecalendar.R
 import me.thanel.linecalendar.calendar.CalendarAdapter
 import me.thanel.linecalendar.calendar.CalendarData
@@ -26,11 +27,16 @@ import me.thanel.linecalendar.preference.WidgetPreferences
 class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor> {
     private var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
     private lateinit var preferences: WidgetPreferences
-    private val adapter = CalendarAdapter()
+    private lateinit var eventAdapter: EventAdapter
+    private val calendarAdapter = CalendarAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_configure_widget)
+
+        eventAdapter = EventAdapter(this)
+        eventsListView.adapter = eventAdapter
+        eventsListView.emptyView = eventsEmptyView
 
         appWidgetId = intent.getIntExtra(
             AppWidgetManager.EXTRA_APPWIDGET_ID,
@@ -51,7 +57,7 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         }
 
         calendarsRecyclerView.layoutManager = LinearLayoutManager(this)
-        calendarsRecyclerView.adapter = adapter
+        calendarsRecyclerView.adapter = calendarAdapter
         calendarsRecyclerView.isNestedScrollingEnabled = false
 
         finishFab.setOnClickListener {
@@ -61,7 +67,8 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
 
         askPermission(Manifest.permission.READ_CALENDAR) {
             if (it.isAccepted) {
-                supportLoaderManager.initLoader(0, null, this)
+                supportLoaderManager.initLoader(LOADER_ID_CALENDARS, null, this)
+                supportLoaderManager.initLoader(LOADER_ID_EVENTS, null, this)
             } else {
                 finish()
             }
@@ -75,47 +82,73 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
     }
 
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
-        val projection = arrayOf(
-            CalendarContract.Calendars._ID,
-            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
-            CalendarContract.Calendars.CALENDAR_COLOR
-        )
-        return CursorLoader(
-            this,
-            CalendarContract.Calendars.CONTENT_URI,
-            projection,
-            null,
-            null,
-            "${CalendarContract.Calendars.CALENDAR_DISPLAY_NAME} COLLATE NOCASE ASC"
-        )
+        return when (id) {
+            LOADER_ID_CALENDARS -> {
+                val projection = arrayOf(
+                    CalendarContract.Calendars._ID,
+                    CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
+                    CalendarContract.Calendars.CALENDAR_COLOR
+                )
+                CursorLoader(
+                    this,
+                    CalendarContract.Calendars.CONTENT_URI,
+                    projection,
+                    null,
+                    null,
+                    "${CalendarContract.Calendars.CALENDAR_DISPLAY_NAME} COLLATE NOCASE ASC"
+                )
+            }
+            LOADER_ID_EVENTS -> {
+                val selectedCalendars = preferences.getSelectedCalendars()
+                CursorLoader(
+                    this,
+                    EventLoader.getUri(),
+                    EventLoader.PROJECTION,
+                    EventLoader.getSelection(selectedCalendars),
+                    EventLoader.getSelectionArgs(selectedCalendars),
+                    EventLoader.getSortOrder()
+                )
+            }
+            else -> throw IllegalArgumentException("Unknown loader id: $id")
+        }
     }
 
     override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
-        if (data == null) {
-            adapter.submitList(emptyList())
-            return
-        }
+        when (loader.id) {
+            LOADER_ID_CALENDARS -> {
+                if (data == null) {
+                    calendarAdapter.submitList(emptyList())
+                    return
+                }
 
-        val selectedCalendars = preferences.getSelectedCalendars()
-        val calendars = mutableListOf<CalendarData>()
-        if (data.moveToFirst()) {
-            do {
-                val id = data.getLong(0)
-                calendars.add(
-                    CalendarData(
-                        id,
-                        data.getString(1),
-                        data.getInt(2),
-                        selectedCalendars.contains(id) || selectedCalendars.isEmpty()
-                    )
-                )
-            } while (data.moveToNext())
+                val selectedCalendars = preferences.getSelectedCalendars()
+                val calendars = mutableListOf<CalendarData>()
+                if (data.moveToFirst()) {
+                    do {
+                        val id = data.getLong(0)
+                        calendars.add(
+                            CalendarData(
+                                id,
+                                data.getString(1),
+                                data.getInt(2),
+                                selectedCalendars.contains(id) || selectedCalendars.isEmpty()
+                            )
+                        )
+                    } while (data.moveToNext())
+                }
+                calendarAdapter.submitList(calendars)
+            }
+            LOADER_ID_EVENTS -> {
+                eventAdapter.swapCursor(data)
+            }
         }
-        adapter.submitList(calendars)
     }
 
     override fun onLoaderReset(loader: Loader<Cursor>) {
-        adapter.submitList(emptyList())
+        when (loader.id) {
+            LOADER_ID_CALENDARS -> calendarAdapter.submitList(emptyList())
+            LOADER_ID_EVENTS -> eventAdapter.swapCursor(null)
+        }
     }
 
     private fun setWidgetResult(resultCode: Int) {
@@ -128,12 +161,15 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
     }
 
     private fun savePreferences() {
-        preferences.saveSelectedCalendars(adapter.getSelectedCalendars())
+        preferences.saveSelectedCalendars(calendarAdapter.getSelectedCalendars())
         preferences.saveName(CalendarAppWidgetProvider.getWidgetIds(this).size)
         preferences.isHeaderEnabled = headerEnabledSwitch.isChecked
     }
 
     companion object {
+        private const val LOADER_ID_CALENDARS = 0
+        private const val LOADER_ID_EVENTS = 1
+
         fun getIntent(context: Context, appWidgetId: Int): Intent =
             Intent(context, ConfigureWidgetActivity::class.java).apply {
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)

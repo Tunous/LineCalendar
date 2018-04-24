@@ -34,6 +34,7 @@ class CalendarAppWidgetProvider : AppWidgetProvider() {
             setupEventsList(context, appWidgetId, views)
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.eventsListView)
         }
     }
 
@@ -82,25 +83,25 @@ class CalendarAppWidgetProvider : AppWidgetProvider() {
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
             data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
         }
-        views.setRemoteAdapter(R.id.events_list_view, intent)
+        views.setRemoteAdapter(R.id.eventsListView, intent)
 
         val itemIntent = Intent(Intent.ACTION_VIEW)
         val pendingIntent = PendingIntent.getActivity(context, appWidgetId, itemIntent, 0)
-        views.setPendingIntentTemplate(R.id.events_list_view, pendingIntent)
+        views.setPendingIntentTemplate(R.id.eventsListView, pendingIntent)
     }
 
     private fun setupEmptyView(context: Context, views: RemoteViews, appWidgetId: Int) {
-        views.setEmptyView(R.id.events_list_view, R.id.empty_view)
+        views.setEmptyView(R.id.eventsListView, R.id.eventsEmptyView)
 
         val permissionGranted = context.hasGrantedCalendarPermission()
         val emptyText = if (permissionGranted) R.string.no_events else R.string.grant_permission
-        views.setTextViewText(R.id.empty_view, context.getString(emptyText))
+        views.setTextViewText(R.id.eventsEmptyView, context.getString(emptyText))
 
         if (!permissionGranted) {
             val permissionIntent = WidgetListActivity.getIntent(context, true)
             val pendingIntent =
                 PendingIntent.getActivity(context, appWidgetId, permissionIntent, 0)
-            views.setOnClickPendingIntent(R.id.empty_view, pendingIntent)
+            views.setOnClickPendingIntent(R.id.eventsEmptyView, pendingIntent)
         }
     }
 
@@ -119,7 +120,7 @@ class CalendarAppWidgetProvider : AppWidgetProvider() {
 
         fun updateEventList(context: Context, vararg appWidgetIds: Int = getWidgetIds(context)) {
             AppWidgetManager.getInstance(context)
-                .notifyAppWidgetViewDataChanged(appWidgetIds, R.id.events_list_view)
+                .notifyAppWidgetViewDataChanged(appWidgetIds, R.id.eventsListView)
         }
 
         fun updateAllWidgets(context: Context) {
