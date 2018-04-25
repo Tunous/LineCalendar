@@ -11,8 +11,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.main.item_event.view.*
 import me.thanel.linecalendar.R
-import me.thanel.linecalendar.util.createColoredCircleBitmap
+import me.thanel.linecalendar.util.ColorMapper
 import me.thanel.linecalendar.util.formatEventTimeText
+import me.thanel.linecalendar.util.tintDrawable
 
 class EventAdapter(context: Context) : CursorAdapter(context, null, 0) {
     override fun newView(context: Context, cursor: Cursor?, parent: ViewGroup): View {
@@ -35,7 +36,7 @@ class EventAdapter(context: Context) : CursorAdapter(context, null, 0) {
         }
 
         val holder = view.tag as ViewHolder
-        holder.eventColorIcon.setImageBitmap(createColoredCircleBitmap(context, color))
+        holder.eventColorIcon.tintDrawable(ColorMapper.getDisplayColor(color))
         holder.eventTitleView.text = title
         holder.eventTimeView.text = formatEventTimeText(context, startTime, allDay)
     }

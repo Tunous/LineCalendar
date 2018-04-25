@@ -11,6 +11,7 @@ import android.widget.CheckBox
 import android.widget.TextView
 import kotlinx.android.synthetic.main.item_calendar.view.*
 import me.thanel.linecalendar.R
+import me.thanel.linecalendar.util.ColorMapper
 
 class CalendarAdapter :
     ListAdapter<CalendarData, CalendarAdapter.ViewHolder>(CalendarData.DIFF_CALLBACK) {
@@ -28,7 +29,7 @@ class CalendarAdapter :
         holder.calendarCheckBox.isChecked = calendarData.isChecked
         CompoundButtonCompat.setButtonTintList(
             holder.calendarCheckBox,
-            ColorStateList.valueOf(calendarData.color)
+            ColorStateList.valueOf(ColorMapper.getDisplayColor(calendarData.color))
         )
     }
 
