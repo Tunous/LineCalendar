@@ -29,68 +29,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <Switch
-                android:id="@+id/headerEnabledSwitch"
-                style="@style/PreferenceHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/header"
-                tools:checked="true" />
-
-            <TextView
-                style="@style/PreferenceHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/indicator_style" />
-
-            <RadioGroup
-                android:id="@+id/indicatorStyleRadioGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <RadioButton
-                    android:id="@+id/indicatorStyleNone"
-                    style="@style/RadioButtonWithIndent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/indicator_style_none" />
-
-                <RadioButton
-                    android:id="@+id/indicatorStyleCircle"
-                    style="@style/RadioButtonWithIndent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/shape_circle_small_colored"
-                    android:text="@string/indicator_style_circle" />
-
-                <RadioButton
-                    android:id="@+id/indicatorStyleRoundedRect"
-                    style="@style/RadioButtonWithIndent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/shape_rounded_rect_small_colored"
-                    android:text="@string/indicator_style_rounded_rect" />
-
-            </RadioGroup>
-
-            <TextView
-                style="@style/PreferenceHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/calendars" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/calendarsRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:listitem="@layout/item_calendar" />
-
-        </LinearLayout>
+        <include layout="@layout/content_configure_widget" />
 
     </android.support.v4.widget.NestedScrollView>
 

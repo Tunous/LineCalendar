@@ -17,6 +17,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.widget.ListView
 import com.github.florent37.runtimepermission.kotlin.askPermission
 import kotlinx.android.synthetic.main.activity_configure_widget.*
+import kotlinx.android.synthetic.main.content_configure_widget.*
 import me.thanel.linecalendar.R
 import me.thanel.linecalendar.calendar.CalendarData
 import me.thanel.linecalendar.preference.IndicatorStyle
