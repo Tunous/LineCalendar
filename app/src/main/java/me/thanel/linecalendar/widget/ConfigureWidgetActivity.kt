@@ -15,6 +15,8 @@ import android.support.v4.content.Loader
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import com.github.florent37.runtimepermission.kotlin.askPermission
 import kotlinx.android.synthetic.main.activity_configure_widget.*
 import kotlinx.android.synthetic.main.view_events_header.*
@@ -34,10 +36,6 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_configure_widget)
 
-        eventAdapter = EventAdapter(this)
-        eventsListView.adapter = eventAdapter
-        eventsListView.emptyView = eventsEmptyView
-
         appWidgetId = intent.getIntExtra(
             AppWidgetManager.EXTRA_APPWIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID
@@ -48,6 +46,10 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
             return
         }
         preferences = WidgetPreferences(this, appWidgetId)
+
+        eventAdapter = EventAdapter(this, preferences)
+        eventsListView.adapter = eventAdapter
+        eventsListView.emptyView = eventsEmptyView
 
         eventsHeader.visibility = if (preferences.isHeaderEnabled) View.VISIBLE else View.GONE
 
@@ -63,6 +65,31 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         finishFab.setOnClickListener {
             setWidgetResult(Activity.RESULT_OK)
             finish()
+        }
+
+        indicatorStyleSpinner.adapter = ArrayAdapter.createFromResource(
+            this,
+            R.array.indicator_styles,
+            android.R.layout.simple_spinner_item
+        ).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+        indicatorStyleSpinner.setSelection(preferences.indicatorStyle.ordinal)
+        indicatorStyleSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val style =
+                    WidgetPreferences.IndicatorStyle.values().find { it.ordinal == position }
+                preferences.indicatorStyle = style ?: WidgetPreferences.IndicatorStyle.Circle
+                eventAdapter.notifyDataSetChanged()
+            }
         }
 
         askPermission(Manifest.permission.READ_CALENDAR) {

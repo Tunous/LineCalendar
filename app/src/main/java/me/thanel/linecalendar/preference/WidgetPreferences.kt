@@ -43,6 +43,20 @@ class WidgetPreferences(context: Context, appWidgetId: Int) {
                 .commit()
         }
 
+    var indicatorStyle: IndicatorStyle
+        get() = IndicatorStyle.valueOf(
+            preferences.getString(
+                getWidgetKey(KEY_INDICATOR_STYLE),
+                IndicatorStyle.Circle.name
+            )
+        )
+        @SuppressLint("ApplySharedPref")
+        set(value) {
+            preferences.edit()
+                .putString(getWidgetKey(KEY_INDICATOR_STYLE), value.name)
+                .commit()
+        }
+
     fun clear(): Boolean {
         val editor = preferences.edit()
         for ((key, _) in preferences.all) {
@@ -55,9 +69,15 @@ class WidgetPreferences(context: Context, appWidgetId: Int) {
 
     private fun getWidgetKey(key: String) = "$keyPrefix$key"
 
+    enum class IndicatorStyle {
+        Circle,
+        RoundedRectangle
+    }
+
     companion object {
         private const val KEY_SELECTED_CALENDARS = "selectedCalendars"
         private const val KEY_NAME = "name"
         private const val KEY_HEADER_ENABLED = "headerEnabled"
+        private const val KEY_INDICATOR_STYLE = "indicatorStyle"
     }
 }

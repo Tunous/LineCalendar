@@ -111,6 +111,43 @@ class WidgetPreferencesTest {
     }
 
     @Test
+    fun indicatorStyle_shouldGetStyleByName() {
+        sharedPreferences.edit()
+            .putString("appWidget1_indicatorStyle", WidgetPreferences.IndicatorStyle.Circle.name)
+            .commit()
+        val prefs = WidgetPreferences(context, 1)
+        assertThat(prefs.indicatorStyle, equalTo(WidgetPreferences.IndicatorStyle.Circle))
+
+        sharedPreferences.edit()
+            .putString(
+                "appWidget1_indicatorStyle",
+                WidgetPreferences.IndicatorStyle.RoundedRectangle.name
+            )
+            .commit()
+        assertThat(prefs.indicatorStyle, equalTo(WidgetPreferences.IndicatorStyle.RoundedRectangle))
+    }
+
+    @Test
+    fun indicatorStyle_shouldReturnCircleStyleByDefault() {
+        val prefs = WidgetPreferences(context, 1)
+        assertThat(prefs.indicatorStyle, equalTo(WidgetPreferences.IndicatorStyle.Circle))
+    }
+
+    @Test
+    fun setIndicatorStyle_shouldSaveStyleByName() {
+        val prefs = WidgetPreferences(context, 1)
+        prefs.indicatorStyle = WidgetPreferences.IndicatorStyle.RoundedRectangle
+
+        assertThat(
+            sharedPreferences.getString(
+                "appWidget1_indicatorStyle",
+                WidgetPreferences.IndicatorStyle.Circle.name
+            ),
+            equalTo(WidgetPreferences.IndicatorStyle.RoundedRectangle.name)
+        )
+    }
+
+    @Test
     fun clear_shouldRemoveWidgetPreferences() {
         sharedPreferences.edit()
             .putInt("appWidget1_pref", 1)

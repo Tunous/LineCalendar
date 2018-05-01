@@ -11,8 +11,8 @@ import android.widget.RemoteViewsService
 import me.thanel.linecalendar.R
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.util.ColorMapper
-import me.thanel.linecalendar.util.createColoredCircleBitmap
 import me.thanel.linecalendar.util.formatEventTimeText
+import me.thanel.linecalendar.util.getTintedBitmap
 import me.thanel.linecalendar.util.hasGrantedCalendarPermission
 
 class CalendarRemoteViewsFactory(
@@ -82,7 +82,17 @@ class CalendarRemoteViewsFactory(
             val timeText = formatEventTimeText(context, startTime, allDay)
             setTextViewText(R.id.eventTimeView, timeText)
             setOnClickFillInIntent(R.id.eventView, intent)
-            val circle = createColoredCircleBitmap(context, ColorMapper.getDisplayColor(color))
+
+            val resId = when (preferences.indicatorStyle) {
+                WidgetPreferences.IndicatorStyle.Circle -> R.drawable.shape_circle_small
+                WidgetPreferences.IndicatorStyle.RoundedRectangle -> R.drawable.shape_rounded_rect_small
+            }
+
+            val circle = getTintedBitmap(
+                context,
+                resId,
+                ColorMapper.getDisplayColor(color)
+            )
             setImageViewBitmap(R.id.eventColorIcon, circle)
         }
     }

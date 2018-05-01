@@ -11,11 +11,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.main.item_event.view.*
 import me.thanel.linecalendar.R
-import me.thanel.linecalendar.util.ColorMapper
+import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.util.formatEventTimeText
-import me.thanel.linecalendar.util.tintDrawable
+import me.thanel.linecalendar.util.getTintedBitmap
 
-class EventAdapter(context: Context) : CursorAdapter(context, null, 0) {
+class EventAdapter(
+    context: Context,
+    private val preferences: WidgetPreferences
+) : CursorAdapter(context, null, 0) {
     override fun newView(context: Context, cursor: Cursor?, parent: ViewGroup): View {
         val layoutInflater = LayoutInflater.from(parent.context)
         val view = layoutInflater.inflate(R.layout.item_event, parent, false)
@@ -35,10 +38,15 @@ class EventAdapter(context: Context) : CursorAdapter(context, null, 0) {
             allDay = cursor.getInt(EventLoader.PROJECTION_ALL_DAY_INDEX) != 0
         }
 
-        val holder = view.tag as ViewHolder
-        holder.eventColorIcon.tintDrawable(ColorMapper.getDisplayColor(color))
-        holder.eventTitleView.text = title
-        holder.eventTimeView.text = formatEventTimeText(context, startTime, allDay)
+        val resId = when (preferences.indicatorStyle) {
+            WidgetPreferences.IndicatorStyle.Circle -> R.drawable.shape_circle_small
+            WidgetPreferences.IndicatorStyle.RoundedRectangle -> R.drawable.shape_rounded_rect_small
+        }
+        with(view.tag as ViewHolder) {
+            eventColorIcon.setImageBitmap(getTintedBitmap(context, resId, color))
+            eventTitleView.text = title
+            eventTimeView.text = formatEventTimeText(context, startTime, allDay)
+        }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

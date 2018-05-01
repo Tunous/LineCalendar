@@ -5,11 +5,11 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.support.annotation.ColorInt
+import android.support.annotation.DrawableRes
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.PermissionChecker
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.text.format.DateUtils
-import me.thanel.linecalendar.R
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -18,8 +18,8 @@ fun Context.hasGrantedCalendarPermission(): Boolean {
     return result == PermissionChecker.PERMISSION_GRANTED
 }
 
-fun createColoredCircleBitmap(context: Context, @ColorInt tint: Int): Bitmap {
-    val drawable = ContextCompat.getDrawable(context, R.drawable.circle_small)!!
+fun getTintedBitmap(context: Context, @DrawableRes drawableRes: Int, @ColorInt tint: Int): Bitmap {
+    val drawable = ContextCompat.getDrawable(context, drawableRes)!!
     val bitmap = Bitmap.createBitmap(
         drawable.intrinsicWidth,
         drawable.intrinsicHeight,
