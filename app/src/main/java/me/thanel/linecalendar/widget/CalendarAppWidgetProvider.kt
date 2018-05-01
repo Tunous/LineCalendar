@@ -15,6 +15,7 @@ import me.thanel.linecalendar.R
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.receiver.EnvironmentChangedReceiver
 import me.thanel.linecalendar.util.hasGrantedCalendarPermission
+import me.thanel.linecalendar.widget.configure.ConfigureWidgetActivity
 import me.thanel.linecalendar.widgetlist.WidgetListActivity
 import java.text.SimpleDateFormat
 import java.util.*

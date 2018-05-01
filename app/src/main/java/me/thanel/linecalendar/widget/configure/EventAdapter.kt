@@ -1,4 +1,4 @@
-package me.thanel.linecalendar.widget
+package me.thanel.linecalendar.widget.configure
 
 import android.content.Context
 import android.view.View
@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import me.thanel.linecalendar.event.provider.DemoEventDataProvider
 import me.thanel.linecalendar.preference.WidgetPreferences
+import me.thanel.linecalendar.widget.CalendarRemoteViewsFactory
 
 class EventAdapter(
     context: Context,
@@ -14,7 +15,11 @@ class EventAdapter(
     private val appContext = context.applicationContext
     private val dataProvider =
         DemoEventDataProvider(appContext)
-    private val factory = CalendarRemoteViewsFactory(appContext, preferences, dataProvider)
+    private val factory = CalendarRemoteViewsFactory(
+        appContext,
+        preferences,
+        dataProvider
+    )
 
     override fun getCount(): Int = dataProvider.events.size
 

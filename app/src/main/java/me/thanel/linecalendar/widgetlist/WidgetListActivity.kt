@@ -14,7 +14,7 @@ import me.thanel.linecalendar.R
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.util.hasGrantedCalendarPermission
 import me.thanel.linecalendar.widget.CalendarAppWidgetProvider
-import me.thanel.linecalendar.widget.ConfigureWidgetActivity
+import me.thanel.linecalendar.widget.configure.ConfigureWidgetActivity
 
 class WidgetListActivity : AppCompatActivity() {
     private val adapter = WidgetListAdapter(::onWidgetClick)

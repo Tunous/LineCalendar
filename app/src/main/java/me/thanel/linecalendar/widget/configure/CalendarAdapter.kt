@@ -1,4 +1,4 @@
-package me.thanel.linecalendar.calendar
+package me.thanel.linecalendar.widget.configure
 
 import android.content.res.ColorStateList
 import android.support.v4.widget.CompoundButtonCompat
@@ -11,6 +11,7 @@ import android.widget.CheckBox
 import android.widget.TextView
 import kotlinx.android.synthetic.main.item_calendar.view.*
 import me.thanel.linecalendar.R
+import me.thanel.linecalendar.calendar.CalendarData
 import me.thanel.linecalendar.util.ColorMapper
 
 class CalendarAdapter :

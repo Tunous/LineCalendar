@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".widget.ConfigureWidgetActivity"
+            android:name=".widget.configure.ConfigureWidgetActivity"
             android:launchMode="singleInstance"
             android:theme="@style/AppTheme.NoActionBar">
 

@@ -1,4 +1,4 @@
-package me.thanel.linecalendar.widget
+package me.thanel.linecalendar.widget.configure
 
 import android.Manifest
 import android.app.Activity
@@ -22,10 +22,10 @@ import kotlinx.android.synthetic.main.activity_configure_widget.*
 import kotlinx.android.synthetic.main.view_events_header.*
 import kotlinx.android.synthetic.main.widget_calendar.*
 import me.thanel.linecalendar.R
-import me.thanel.linecalendar.calendar.CalendarAdapter
 import me.thanel.linecalendar.calendar.CalendarData
 import me.thanel.linecalendar.event.EventLoader
 import me.thanel.linecalendar.preference.WidgetPreferences
+import me.thanel.linecalendar.widget.CalendarAppWidgetProvider
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -189,12 +189,19 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
 
     private fun updateWidget() {
         CalendarAppWidgetProvider.updateAllWidgets(this)
-        CalendarAppWidgetProvider.updateEventList(this, appWidgetId)
+        CalendarAppWidgetProvider.updateEventList(
+            this,
+            appWidgetId
+        )
     }
 
     private fun savePreferences() {
         preferences.saveSelectedCalendars(calendarAdapter.getSelectedCalendars())
-        preferences.saveName(CalendarAppWidgetProvider.getWidgetIds(this).size)
+        preferences.saveName(
+            CalendarAppWidgetProvider.getWidgetIds(
+                this
+            ).size
+        )
     }
 
     companion object {

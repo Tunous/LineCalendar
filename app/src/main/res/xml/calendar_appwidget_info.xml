@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:configure="me.thanel.linecalendar.widget.ConfigureWidgetActivity"
+    android:configure="me.thanel.linecalendar.widget.configure.ConfigureWidgetActivity"
     android:initialLayout="@layout/widget_calendar"
     android:minHeight="40dp"
     android:minResizeHeight="40dp"
