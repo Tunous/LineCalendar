@@ -10,8 +10,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.content.PermissionChecker
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.text.format.DateUtils
-import java.text.SimpleDateFormat
-import java.util.*
 
 fun Context.hasGrantedCalendarPermission(): Boolean {
     val result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR)
@@ -42,14 +40,19 @@ fun getTintedBitmap(context: Context, @DrawableRes drawableRes: Int, @ColorInt t
 
 fun formatEventTimeText(context: Context, startTime: Long, allDay: Boolean): CharSequence {
     if (allDay) {
-        val formatter = SimpleDateFormat("d MMM", Locale.getDefault())
-        return formatter.format(Date(startTime))
+        return DateUtils.getRelativeTimeSpanString(
+            startTime,
+            System.currentTimeMillis(),
+            DateUtils.DAY_IN_MILLIS,
+            DateUtils.FORMAT_NO_YEAR
+        )
     }
     return DateUtils.getRelativeDateTimeString(
         context,
         startTime,
         DateUtils.MINUTE_IN_MILLIS,
         DateUtils.WEEK_IN_MILLIS,
-        DateUtils.FORMAT_ABBREV_MONTH or DateUtils.FORMAT_ABBREV_WEEKDAY
+        if (allDay) DateUtils.FORMAT_SHOW_WEEKDAY
+        else DateUtils.FORMAT_ABBREV_MONTH or DateUtils.FORMAT_ABBREV_WEEKDAY
     )
 }

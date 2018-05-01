@@ -4,4 +4,12 @@
         <item>Circle</item>
         <item>Rounded rectangle</item>
     </string-array>
+
+    <string-array name="demo_event_titles">
+        <item>Meeting with Emma</item>
+        <item>Dentist</item>
+        <item>Running competition</item>
+        <item>Sister\'s birthday</item>
+        <item>Trip to Italy</item>
+    </string-array>
 </resources>

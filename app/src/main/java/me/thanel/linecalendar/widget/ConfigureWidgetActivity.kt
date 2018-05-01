@@ -31,7 +31,7 @@ import java.util.*
 class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor> {
     private var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
     private lateinit var preferences: WidgetPreferences
-    private lateinit var eventAdapter: EventAdapter
+    private lateinit var eventAdapter: DemoEventAdapter
     private val calendarAdapter = CalendarAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +49,7 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         }
         preferences = WidgetPreferences(this, appWidgetId)
 
-        eventAdapter = EventAdapter(this, preferences)
+        eventAdapter = DemoEventAdapter(this, preferences)
         eventsListView.adapter = eventAdapter
         eventsListView.emptyView = eventsEmptyView
 
@@ -99,7 +99,7 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         askPermission(Manifest.permission.READ_CALENDAR) {
             if (it.isAccepted) {
                 supportLoaderManager.initLoader(LOADER_ID_CALENDARS, null, this)
-                supportLoaderManager.initLoader(LOADER_ID_EVENTS, null, this)
+//                supportLoaderManager.initLoader(LOADER_ID_EVENTS, null, this)
             } else {
                 finish()
             }
@@ -170,7 +170,7 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
                 calendarAdapter.submitList(calendars)
             }
             LOADER_ID_EVENTS -> {
-                eventAdapter.swapCursor(data)
+//                eventAdapter.swapCursor(data)
             }
         }
     }
@@ -178,7 +178,7 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
     override fun onLoaderReset(loader: Loader<Cursor>) {
         when (loader.id) {
             LOADER_ID_CALENDARS -> calendarAdapter.submitList(emptyList())
-            LOADER_ID_EVENTS -> eventAdapter.swapCursor(null)
+//            LOADER_ID_EVENTS -> eventAdapter.swapCursor(null)
         }
     }
 
