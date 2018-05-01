@@ -59,7 +59,7 @@
                 android:layout_marginStart="32dp">
 
                 <RadioButton
-                    android:id="@+id/indicator_style_none"
+                    android:id="@+id/indicatorStyleNone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingEnd="28dp"
@@ -67,7 +67,7 @@
                     android:text="@string/indicator_style_none" />
 
                 <RadioButton
-                    android:id="@+id/indicator_style_circle"
+                    android:id="@+id/indicatorStyleCircle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/shape_circle_small_colored"
@@ -76,7 +76,7 @@
                     android:text="@string/indicator_style_circle" />
 
                 <RadioButton
-                    android:id="@+id/indicator_style_rounded_rect"
+                    android:id="@+id/indicatorStyleRoundedRect"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/shape_rounded_rect_small_colored"

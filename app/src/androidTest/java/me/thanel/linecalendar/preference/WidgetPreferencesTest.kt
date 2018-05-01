@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.support.test.InstrumentationRegistry
-import org.hamcrest.Matchers.*
+import org.hamcrest.Matchers.containsInAnyOrder
+import org.hamcrest.Matchers.empty
+import org.hamcrest.Matchers.equalTo
 import org.junit.After
 import org.junit.Assert.assertThat
 import org.junit.Before
@@ -113,37 +115,37 @@ class WidgetPreferencesTest {
     @Test
     fun indicatorStyle_shouldGetStyleByName() {
         sharedPreferences.edit()
-            .putString("appWidget1_indicatorStyle", WidgetPreferences.IndicatorStyle.Circle.name)
+            .putString("appWidget1_indicatorStyle", IndicatorStyle.Circle.name)
             .commit()
         val prefs = WidgetPreferences(context, 1)
-        assertThat(prefs.indicatorStyle, equalTo(WidgetPreferences.IndicatorStyle.Circle))
+        assertThat(prefs.indicatorStyle, equalTo(IndicatorStyle.Circle))
 
         sharedPreferences.edit()
             .putString(
                 "appWidget1_indicatorStyle",
-                WidgetPreferences.IndicatorStyle.RoundedRectangle.name
+                IndicatorStyle.RoundedRectangle.name
             )
             .commit()
-        assertThat(prefs.indicatorStyle, equalTo(WidgetPreferences.IndicatorStyle.RoundedRectangle))
+        assertThat(prefs.indicatorStyle, equalTo(IndicatorStyle.RoundedRectangle))
     }
 
     @Test
     fun indicatorStyle_shouldReturnCircleStyleByDefault() {
         val prefs = WidgetPreferences(context, 1)
-        assertThat(prefs.indicatorStyle, equalTo(WidgetPreferences.IndicatorStyle.Circle))
+        assertThat(prefs.indicatorStyle, equalTo(IndicatorStyle.Circle))
     }
 
     @Test
     fun setIndicatorStyle_shouldSaveStyleByName() {
         val prefs = WidgetPreferences(context, 1)
-        prefs.indicatorStyle = WidgetPreferences.IndicatorStyle.RoundedRectangle
+        prefs.indicatorStyle = IndicatorStyle.RoundedRectangle
 
         assertThat(
             sharedPreferences.getString(
                 "appWidget1_indicatorStyle",
-                WidgetPreferences.IndicatorStyle.Circle.name
+                IndicatorStyle.Circle.name
             ),
-            equalTo(WidgetPreferences.IndicatorStyle.RoundedRectangle.name)
+            equalTo(IndicatorStyle.RoundedRectangle.name)
         )
     }
 

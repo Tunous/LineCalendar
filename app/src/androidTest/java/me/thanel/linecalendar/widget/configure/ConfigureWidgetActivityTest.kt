@@ -18,6 +18,7 @@ import android.support.test.rule.ActivityTestRule
 import android.support.test.rule.GrantPermissionRule
 import android.support.test.runner.AndroidJUnit4
 import me.thanel.linecalendar.R
+import me.thanel.linecalendar.preference.IndicatorStyle
 import me.thanel.linecalendar.preference.WidgetPreferences
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matchers.equalTo
@@ -33,11 +34,7 @@ class ConfigureWidgetActivityTest {
     @Suppress("MemberVisibilityCanBePrivate")
     @get:Rule
     val activityTestRule =
-        object : ActivityTestRule<ConfigureWidgetActivity>(
-            ConfigureWidgetActivity::class.java,
-            false,
-            false
-        ) {
+        object : ActivityTestRule<ConfigureWidgetActivity>(ConfigureWidgetActivity::class.java) {
             override fun getActivityIntent(): Intent {
                 val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
                 return Intent(targetContext, ConfigureWidgetActivity::class.java)
@@ -61,53 +58,43 @@ class ConfigureWidgetActivityTest {
 
     @Test
     fun uncheckHeaderSwitch_hidesHeaderAndUpdatesPreference() {
-        activityTestRule.launchActivity(null)
-
-        val headerEnabledSwitch = onView(withId(R.id.headerEnabledSwitch))
-        val eventsHeader = onView(withId(R.id.eventsHeader))
-
-        headerEnabledSwitch.check(matches(isChecked()))
-        eventsHeader.check(matches(isDisplayed()))
+        // By default should enable header
+        onView(withId(R.id.headerEnabledSwitch)).check(matches(isChecked()))
+        onView(withId(R.id.eventsHeader)).check(matches(isDisplayed()))
 
         // Uncheck header switch
-        headerEnabledSwitch.perform(click())
+        onView(withId(R.id.headerEnabledSwitch)).perform(click())
 
-        // Check that the header has been hidden
-        headerEnabledSwitch.check(matches(isNotChecked()))
-        eventsHeader.check(matches(not(isDisplayed())))
+        // Verify that the header has been hidden
+        onView(withId(R.id.headerEnabledSwitch)).check(matches(isNotChecked()))
+        onView(withId(R.id.eventsHeader)).check(matches(not(isDisplayed())))
         // ...and preference updated
         assertThat(preferences.isHeaderEnabled, equalTo(false))
     }
 
     @Test
-    fun checkHeaderSwitch_showsHeaderAndUpdatesPreference() {
-        preferences.isHeaderEnabled = false
-
-        activityTestRule.launchActivity(null)
-
-        val headerEnabledSwitch = onView(withId(R.id.headerEnabledSwitch))
-        val eventsHeader = onView(withId(R.id.eventsHeader))
-
-        headerEnabledSwitch.check(matches(isNotChecked()))
-        eventsHeader.check(matches(not(isDisplayed())))
-
-        // Check header switch
-        headerEnabledSwitch.perform(click())
-
-        // Check that the header has been shown
-        headerEnabledSwitch.check(matches(isChecked()))
-        eventsHeader.check(matches(isDisplayed()))
-        // ...and preference updated
-        assertThat(preferences.isHeaderEnabled, equalTo(true))
-    }
-
-    @Test
     fun clickFinishFab_closesActivityWithOkResult() {
-        activityTestRule.launchActivity(null)
-
         onView(withId(R.id.finishFab)).perform(click())
 
         assertThat(activityTestRule.activity.isFinishing, equalTo(true))
         assertThat(activityTestRule.activityResult, hasResultCode(Activity.RESULT_OK))
+    }
+
+    @Test
+    fun indicatorStyle_updatesViewsAndPreference() {
+        // By default should check circle style
+        onView(withId(R.id.indicatorStyleNone)).check(matches(not(isChecked())))
+        onView(withId(R.id.indicatorStyleCircle)).check(matches(isChecked()))
+        onView(withId(R.id.indicatorStyleRoundedRect)).check(matches(not(isChecked())))
+
+        // Click on "none" style
+        onView(withId(R.id.indicatorStyleNone)).perform(click())
+
+        // Verify that radio button state has been updated
+        onView(withId(R.id.indicatorStyleNone)).check(matches(isChecked()))
+        onView(withId(R.id.indicatorStyleCircle)).check(matches(not(isChecked())))
+        onView(withId(R.id.indicatorStyleRoundedRect)).check(matches(not(isChecked())))
+        // ...and preference modified
+        assertThat(preferences.indicatorStyle, equalTo(IndicatorStyle.None))
     }
 }

@@ -10,6 +10,7 @@ import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import me.thanel.linecalendar.R
 import me.thanel.linecalendar.event.provider.EventDataProvider
+import me.thanel.linecalendar.preference.IndicatorStyle
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.util.ColorMapper
 import me.thanel.linecalendar.util.formatEventTimeText
@@ -46,9 +47,9 @@ class CalendarRemoteViewsFactory(
             setOnClickFillInIntent(R.id.eventView, intent)
 
             val resId = when (preferences.indicatorStyle) {
-                WidgetPreferences.IndicatorStyle.None -> null
-                WidgetPreferences.IndicatorStyle.Circle -> R.drawable.shape_circle_small
-                WidgetPreferences.IndicatorStyle.RoundedRectangle -> R.drawable.shape_rounded_rect_small
+                IndicatorStyle.None -> null
+                IndicatorStyle.Circle -> R.drawable.shape_circle_small
+                IndicatorStyle.RoundedRectangle -> R.drawable.shape_rounded_rect_small
             }
 
             if (resId != null) {

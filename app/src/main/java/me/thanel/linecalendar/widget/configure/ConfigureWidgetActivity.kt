@@ -19,6 +19,7 @@ import com.github.florent37.runtimepermission.kotlin.askPermission
 import kotlinx.android.synthetic.main.activity_configure_widget.*
 import me.thanel.linecalendar.R
 import me.thanel.linecalendar.calendar.CalendarData
+import me.thanel.linecalendar.preference.IndicatorStyle
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.widget.CalendarAppWidgetProvider
 
@@ -101,7 +102,7 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
     private fun setupIndicatorSettings() {
         indicatorStyleRadioGroup.check(preferences.indicatorStyle.id)
         indicatorStyleRadioGroup.setOnCheckedChangeListener { _, checkedId ->
-            preferences.indicatorStyle = WidgetPreferences.IndicatorStyle.fromId(checkedId)!!
+            preferences.indicatorStyle = IndicatorStyle.fromId(checkedId)!!
             eventAdapter.notifyDataSetChanged()
         }
     }

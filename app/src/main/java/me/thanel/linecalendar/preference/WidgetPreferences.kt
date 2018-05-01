@@ -3,8 +3,6 @@ package me.thanel.linecalendar.preference
 import android.annotation.SuppressLint
 import android.content.Context
 import android.preference.PreferenceManager
-import android.support.annotation.IdRes
-import me.thanel.linecalendar.R
 
 class WidgetPreferences(context: Context, appWidgetId: Int) {
     private val keyPrefix = "appWidget${appWidgetId}_"
@@ -70,16 +68,6 @@ class WidgetPreferences(context: Context, appWidgetId: Int) {
     }
 
     private fun getWidgetKey(key: String) = "$keyPrefix$key"
-
-    enum class IndicatorStyle(@IdRes val id: Int) {
-        None(R.id.indicator_style_none),
-        Circle(R.id.indicator_style_circle),
-        RoundedRectangle(R.id.indicator_style_rounded_rect);
-
-        companion object {
-            fun fromId(@IdRes id: Int): IndicatorStyle? = values().find { it.id == id }
-        }
-    }
 
     companion object {
         private const val KEY_SELECTED_CALENDARS = "selectedCalendars"
