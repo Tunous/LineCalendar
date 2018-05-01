@@ -14,15 +14,11 @@ class EventAdapter(
 ) : BaseAdapter() {
     private val appContext = context.applicationContext
     private val dataProvider = DemoEventDataProvider(appContext)
-    private val factory = CalendarRemoteViewsFactory(
-        appContext,
-        preferences,
-        dataProvider
-    )
+    private val factory = CalendarRemoteViewsFactory(appContext, preferences, dataProvider)
 
-    override fun getCount(): Int = dataProvider.events.size
+    override fun getCount(): Int = dataProvider.count
 
-    override fun getItem(position: Int): Any = dataProvider.events[position]
+    override fun getItem(position: Int): Any = dataProvider.getEvent(position)
 
     override fun getItemId(position: Int): Long = position.toLong()
 

@@ -14,9 +14,11 @@ class CursorEventDataProvider(
 ) : EventDataProvider {
     private var cursor: Cursor? = null
 
+    override val count: Int
+        get() = cursor?.count ?: 0
+
     override fun onDataSetChanged() {
-        cursor?.close()
-        cursor = null
+        onDestroy()
 
         if (!context.hasGrantedCalendarPermission()) {
             return
@@ -46,5 +48,10 @@ class CursorEventDataProvider(
             localCursor.getLong(EventLoader.PROJECTION_START_TIME_INDEX),
             localCursor.getInt(EventLoader.PROJECTION_ALL_DAY_INDEX) != 0
         )
+    }
+
+    override fun onDestroy() {
+        cursor?.close()
+        cursor = null
     }
 }

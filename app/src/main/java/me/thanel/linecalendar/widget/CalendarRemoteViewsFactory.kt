@@ -3,7 +3,6 @@ package me.thanel.linecalendar.widget
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
-import android.database.Cursor
 import android.provider.CalendarContract
 import android.view.View
 import android.widget.RemoteViews
@@ -21,8 +20,6 @@ class CalendarRemoteViewsFactory(
     private val preferences: WidgetPreferences,
     private val dataProvider: EventDataProvider
 ) : RemoteViewsService.RemoteViewsFactory {
-    private var cursor: Cursor? = null
-
     override fun onCreate() = Unit
 
     override fun getLoadingView(): RemoteViews? = null
@@ -63,12 +60,9 @@ class CalendarRemoteViewsFactory(
         }
     }
 
-    override fun getCount(): Int = cursor?.count ?: 0
+    override fun getCount(): Int = dataProvider.count
 
     override fun getViewTypeCount(): Int = 1
 
-    override fun onDestroy() {
-        cursor?.close()
-        cursor = null
-    }
+    override fun onDestroy() = dataProvider.onDestroy()
 }

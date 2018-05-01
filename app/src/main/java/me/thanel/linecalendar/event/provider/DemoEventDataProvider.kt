@@ -6,9 +6,11 @@ import me.thanel.linecalendar.R
 import me.thanel.linecalendar.event.EventData
 import java.util.concurrent.TimeUnit
 
-class DemoEventDataProvider(context: Context) :
-    EventDataProvider {
-    val events: List<EventData>
+class DemoEventDataProvider(context: Context) : EventDataProvider {
+    private val events: List<EventData>
+
+    override val count: Int
+        get() = events.size
 
     init {
         val titles = context.resources.getStringArray(R.array.demo_event_titles)
@@ -28,4 +30,6 @@ class DemoEventDataProvider(context: Context) :
     override fun onDataSetChanged() = Unit
 
     override fun getEvent(position: Int) = events[position]
+
+    override fun onDestroy() = Unit
 }
