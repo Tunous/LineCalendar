@@ -23,7 +23,6 @@ import kotlinx.android.synthetic.main.view_events_header.*
 import kotlinx.android.synthetic.main.widget_calendar.*
 import me.thanel.linecalendar.R
 import me.thanel.linecalendar.calendar.CalendarData
-import me.thanel.linecalendar.event.EventLoader
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.widget.CalendarAppWidgetProvider
 
@@ -59,7 +58,6 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         askPermission(Manifest.permission.READ_CALENDAR) {
             if (it.isAccepted) {
                 supportLoaderManager.initLoader(LOADER_ID_CALENDARS, null, this)
-//                supportLoaderManager.initLoader(LOADER_ID_EVENTS, null, this)
             } else {
                 finish()
             }
@@ -105,8 +103,7 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         }
         indicatorStyleSpinner.setSelection(preferences.indicatorStyle.ordinal)
         indicatorStyleSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
 
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -145,17 +142,6 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
                     "${CalendarContract.Calendars.CALENDAR_DISPLAY_NAME} COLLATE NOCASE ASC"
                 )
             }
-            LOADER_ID_EVENTS -> {
-                val selectedCalendars = preferences.getSelectedCalendars()
-                CursorLoader(
-                    this,
-                    EventLoader.getUri(),
-                    EventLoader.PROJECTION,
-                    EventLoader.getSelection(selectedCalendars),
-                    EventLoader.getSelectionArgs(selectedCalendars),
-                    EventLoader.getSortOrder()
-                )
-            }
             else -> throw IllegalArgumentException("Unknown loader id: $id")
         }
     }
@@ -185,16 +171,12 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
                 }
                 calendarAdapter.submitList(calendars)
             }
-            LOADER_ID_EVENTS -> {
-//                eventAdapter.swapCursor(data)
-            }
         }
     }
 
     override fun onLoaderReset(loader: Loader<Cursor>) {
         when (loader.id) {
             LOADER_ID_CALENDARS -> calendarAdapter.submitList(emptyList())
-//            LOADER_ID_EVENTS -> eventAdapter.swapCursor(null)
         }
     }
 
@@ -214,7 +196,6 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
 
     companion object {
         private const val LOADER_ID_CALENDARS = 0
-        private const val LOADER_ID_EVENTS = 1
 
         fun getIntent(context: Context, appWidgetId: Int): Intent =
             Intent(context, ConfigureWidgetActivity::class.java).apply {

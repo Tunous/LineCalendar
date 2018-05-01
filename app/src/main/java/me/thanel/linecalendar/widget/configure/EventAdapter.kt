@@ -13,8 +13,7 @@ class EventAdapter(
     preferences: WidgetPreferences
 ) : BaseAdapter() {
     private val appContext = context.applicationContext
-    private val dataProvider =
-        DemoEventDataProvider(appContext)
+    private val dataProvider = DemoEventDataProvider(appContext)
     private val factory = CalendarRemoteViewsFactory(
         appContext,
         preferences,
