@@ -11,6 +11,7 @@
     <string name="grant_permission">Widget requires permission to read calendars.\nTap here to grant permission.</string>
     <string name="header">Header</string>
     <string name="indicator_style">Indicator style</string>
+    <string name="indicator_style_none">None</string>
     <string name="indicator_style_circle">Circle</string>
     <string name="indicator_style_rounded_rect">Rounded rectangle</string>
 </resources>

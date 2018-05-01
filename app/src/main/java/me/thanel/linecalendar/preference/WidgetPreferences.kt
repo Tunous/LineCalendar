@@ -72,6 +72,7 @@ class WidgetPreferences(context: Context, appWidgetId: Int) {
     private fun getWidgetKey(key: String) = "$keyPrefix$key"
 
     enum class IndicatorStyle(@IdRes val id: Int) {
+        None(R.id.indicator_style_none),
         Circle(R.id.indicator_style_circle),
         RoundedRectangle(R.id.indicator_style_rounded_rect);
 

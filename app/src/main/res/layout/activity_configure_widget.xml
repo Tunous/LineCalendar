@@ -59,6 +59,14 @@
                 android:layout_marginStart="32dp">
 
                 <RadioButton
+                    android:id="@+id/indicator_style_none"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="28dp"
+                    android:paddingStart="16dp"
+                    android:text="@string/indicator_style_none" />
+
+                <RadioButton
                     android:id="@+id/indicator_style_circle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

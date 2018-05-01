@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.provider.CalendarContract
+import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import me.thanel.linecalendar.R
@@ -45,12 +46,19 @@ class CalendarRemoteViewsFactory(
             setOnClickFillInIntent(R.id.eventView, intent)
 
             val resId = when (preferences.indicatorStyle) {
+                WidgetPreferences.IndicatorStyle.None -> null
                 WidgetPreferences.IndicatorStyle.Circle -> R.drawable.shape_circle_small
                 WidgetPreferences.IndicatorStyle.RoundedRectangle -> R.drawable.shape_rounded_rect_small
             }
 
-            val circle = getTintedBitmap(context, resId, ColorMapper.getDisplayColor(event.color))
-            setImageViewBitmap(R.id.eventColorIcon, circle)
+            if (resId != null) {
+                val circle =
+                    getTintedBitmap(context, resId, ColorMapper.getDisplayColor(event.color))
+                setImageViewBitmap(R.id.eventColorIcon, circle)
+                setViewVisibility(R.id.eventColorIcon, View.VISIBLE)
+            } else {
+                setViewVisibility(R.id.eventColorIcon, View.GONE)
+            }
         }
     }
 
