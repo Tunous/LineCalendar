@@ -51,7 +51,7 @@ class CalendarAppWidgetProvider : AppWidgetProvider() {
         views.setViewVisibility(R.id.eventsHeader, View.VISIBLE)
 
         val today = SimpleDateFormat("EEEE d MMMM", Locale.getDefault()).format(Date())
-        views.setTextViewText(R.id.header_title, today)
+        views.setTextViewText(R.id.headerTitleView, today)
 
         val builder = CalendarContract.CONTENT_URI.buildUpon()
             .appendPath("time")
@@ -60,7 +60,7 @@ class CalendarAppWidgetProvider : AppWidgetProvider() {
             .setData(builder.build())
         val calendarPendingIntent =
             PendingIntent.getActivity(context, appWidgetId, calendarIntent, 0)
-        views.setOnClickPendingIntent(R.id.header_title, calendarPendingIntent)
+        views.setOnClickPendingIntent(R.id.headerTitleView, calendarPendingIntent)
 
         val addIntent = Intent(Intent.ACTION_INSERT)
             .setData(CalendarContract.Events.CONTENT_URI)

@@ -25,6 +25,8 @@ import me.thanel.linecalendar.R
 import me.thanel.linecalendar.calendar.CalendarAdapter
 import me.thanel.linecalendar.calendar.CalendarData
 import me.thanel.linecalendar.preference.WidgetPreferences
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor> {
     private var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
@@ -52,9 +54,11 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         eventsListView.emptyView = eventsEmptyView
 
         eventsHeader.visibility = if (preferences.isHeaderEnabled) View.VISIBLE else View.GONE
+        headerTitleView.text = SimpleDateFormat("EEEE d MMMM", Locale.getDefault()).format(Date())
 
         headerEnabledSwitch.isChecked = preferences.isHeaderEnabled
         headerEnabledSwitch.setOnCheckedChangeListener { _, isChecked ->
+            preferences.isHeaderEnabled = isChecked
             eventsHeader.visibility = if (isChecked) View.VISIBLE else View.GONE
         }
 
@@ -190,7 +194,6 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
     private fun savePreferences() {
         preferences.saveSelectedCalendars(calendarAdapter.getSelectedCalendars())
         preferences.saveName(CalendarAppWidgetProvider.getWidgetIds(this).size)
-        preferences.isHeaderEnabled = headerEnabledSwitch.isChecked
     }
 
     companion object {
