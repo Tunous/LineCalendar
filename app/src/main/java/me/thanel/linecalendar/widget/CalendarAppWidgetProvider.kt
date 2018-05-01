@@ -27,82 +27,10 @@ class CalendarAppWidgetProvider : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         for (appWidgetId in appWidgetIds) {
-            val views = RemoteViews(context.packageName, R.layout.widget_calendar)
-            val prefs = WidgetPreferences(context, appWidgetId)
-
-            setupHeader(context, appWidgetId, views, prefs)
-            setupEmptyView(context, views, appWidgetId)
+            val views = createViews(context, appWidgetId)
             setupEventsList(context, appWidgetId, views)
-
             appWidgetManager.updateAppWidget(appWidgetId, views)
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.eventsListView)
-        }
-    }
-
-    private fun setupHeader(
-        context: Context,
-        appWidgetId: Int,
-        views: RemoteViews,
-        prefs: WidgetPreferences
-    ) {
-        if (!prefs.isHeaderEnabled) {
-            views.setViewVisibility(R.id.eventsHeader, View.GONE)
-            return
-        }
-        views.setViewVisibility(R.id.eventsHeader, View.VISIBLE)
-
-        val today = SimpleDateFormat("EEEE d MMMM", Locale.getDefault()).format(Date())
-        views.setTextViewText(R.id.headerTitleView, today)
-
-        val builder = CalendarContract.CONTENT_URI.buildUpon()
-            .appendPath("time")
-        ContentUris.appendId(builder, System.currentTimeMillis())
-        val calendarIntent = Intent(Intent.ACTION_VIEW)
-            .setData(builder.build())
-        val calendarPendingIntent =
-            PendingIntent.getActivity(context, appWidgetId, calendarIntent, 0)
-        views.setOnClickPendingIntent(R.id.headerTitleView, calendarPendingIntent)
-
-        val addIntent = Intent(Intent.ACTION_INSERT)
-            .setData(CalendarContract.Events.CONTENT_URI)
-        val addPendingIntent = PendingIntent.getActivity(context, appWidgetId, addIntent, 0)
-        views.setOnClickPendingIntent(R.id.add_event_header_button, addPendingIntent)
-
-        val refreshIntent = Intent(EnvironmentChangedReceiver.ACTION_REFRESH)
-        val refreshPendingIntent =
-            PendingIntent.getBroadcast(context, appWidgetId, refreshIntent, 0)
-        views.setOnClickPendingIntent(R.id.refresh_header_button, refreshPendingIntent)
-
-        val settingsIntent = ConfigureWidgetActivity.getIntent(context, appWidgetId)
-        val settingsPendingIntent =
-            PendingIntent.getActivity(context, appWidgetId, settingsIntent, 0)
-        views.setOnClickPendingIntent(R.id.settings_header_button, settingsPendingIntent)
-    }
-
-    private fun setupEventsList(context: Context, appWidgetId: Int, views: RemoteViews) {
-        val intent = Intent(context, CalendarWidgetService::class.java).apply {
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
-        }
-        views.setRemoteAdapter(R.id.eventsListView, intent)
-
-        val itemIntent = Intent(Intent.ACTION_VIEW)
-        val pendingIntent = PendingIntent.getActivity(context, appWidgetId, itemIntent, 0)
-        views.setPendingIntentTemplate(R.id.eventsListView, pendingIntent)
-    }
-
-    private fun setupEmptyView(context: Context, views: RemoteViews, appWidgetId: Int) {
-        views.setEmptyView(R.id.eventsListView, R.id.eventsEmptyView)
-
-        val permissionGranted = context.hasGrantedCalendarPermission()
-        val emptyText = if (permissionGranted) R.string.no_events else R.string.grant_permission
-        views.setTextViewText(R.id.eventsEmptyView, context.getString(emptyText))
-
-        if (!permissionGranted) {
-            val permissionIntent = WidgetListActivity.getIntent(context, true)
-            val pendingIntent =
-                PendingIntent.getActivity(context, appWidgetId, permissionIntent, 0)
-            views.setOnClickPendingIntent(R.id.eventsEmptyView, pendingIntent)
         }
     }
 
@@ -130,6 +58,83 @@ class CalendarAppWidgetProvider : AppWidgetProvider() {
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, getWidgetIds(context))
             }
             context.sendBroadcast(intent)
+        }
+
+        fun createViews(context: Context, appWidgetId: Int): RemoteViews {
+            val views = RemoteViews(context.packageName, R.layout.widget_calendar)
+            val prefs = WidgetPreferences(context, appWidgetId)
+
+            setupHeader(context, appWidgetId, views, prefs)
+            setupEmptyView(context, appWidgetId, views)
+
+            return views
+        }
+
+        private fun setupHeader(
+            context: Context,
+            appWidgetId: Int,
+            views: RemoteViews,
+            prefs: WidgetPreferences
+        ) {
+            if (!prefs.isHeaderEnabled) {
+                views.setViewVisibility(R.id.eventsHeader, View.GONE)
+                return
+            }
+            views.setViewVisibility(R.id.eventsHeader, View.VISIBLE)
+
+            val today = SimpleDateFormat("EEEE d MMMM", Locale.getDefault()).format(Date())
+            views.setTextViewText(R.id.headerTitleView, today)
+
+            val builder = CalendarContract.CONTENT_URI.buildUpon()
+                .appendPath("time")
+            ContentUris.appendId(builder, System.currentTimeMillis())
+            val calendarIntent = Intent(Intent.ACTION_VIEW)
+                .setData(builder.build())
+            val calendarPendingIntent =
+                PendingIntent.getActivity(context, appWidgetId, calendarIntent, 0)
+            views.setOnClickPendingIntent(R.id.headerTitleView, calendarPendingIntent)
+
+            val addIntent = Intent(Intent.ACTION_INSERT)
+                .setData(CalendarContract.Events.CONTENT_URI)
+            val addPendingIntent = PendingIntent.getActivity(context, appWidgetId, addIntent, 0)
+            views.setOnClickPendingIntent(R.id.add_event_header_button, addPendingIntent)
+
+            val refreshIntent = Intent(EnvironmentChangedReceiver.ACTION_REFRESH)
+            val refreshPendingIntent =
+                PendingIntent.getBroadcast(context, appWidgetId, refreshIntent, 0)
+            views.setOnClickPendingIntent(R.id.refresh_header_button, refreshPendingIntent)
+
+            val settingsIntent = ConfigureWidgetActivity.getIntent(context, appWidgetId)
+            val settingsPendingIntent =
+                PendingIntent.getActivity(context, appWidgetId, settingsIntent, 0)
+            views.setOnClickPendingIntent(R.id.settings_header_button, settingsPendingIntent)
+        }
+
+        private fun setupEventsList(context: Context, appWidgetId: Int, views: RemoteViews) {
+            val intent = Intent(context, CalendarWidgetService::class.java).apply {
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
+            }
+            views.setRemoteAdapter(R.id.eventsListView, intent)
+
+            val itemIntent = Intent(Intent.ACTION_VIEW)
+            val pendingIntent = PendingIntent.getActivity(context, appWidgetId, itemIntent, 0)
+            views.setPendingIntentTemplate(R.id.eventsListView, pendingIntent)
+        }
+
+        private fun setupEmptyView(context: Context, appWidgetId: Int, views: RemoteViews) {
+            views.setEmptyView(R.id.eventsListView, R.id.eventsEmptyView)
+
+            val permissionGranted = context.hasGrantedCalendarPermission()
+            val emptyText = if (permissionGranted) R.string.no_events else R.string.grant_permission
+            views.setTextViewText(R.id.eventsEmptyView, context.getString(emptyText))
+
+            if (!permissionGranted) {
+                val permissionIntent = WidgetListActivity.getIntent(context, true)
+                val pendingIntent =
+                    PendingIntent.getActivity(context, appWidgetId, permissionIntent, 0)
+                views.setOnClickPendingIntent(R.id.eventsEmptyView, pendingIntent)
+            }
         }
     }
 }

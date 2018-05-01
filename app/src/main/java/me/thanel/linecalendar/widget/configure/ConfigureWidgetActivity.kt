@@ -26,8 +26,6 @@ import me.thanel.linecalendar.calendar.CalendarData
 import me.thanel.linecalendar.event.EventLoader
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.widget.CalendarAppWidgetProvider
-import java.text.SimpleDateFormat
-import java.util.*
 
 class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor> {
     private var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
@@ -50,28 +48,54 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         }
         preferences = WidgetPreferences(this, appWidgetId)
 
-        eventAdapter = EventAdapter(this, preferences)
-        eventsListView.adapter = eventAdapter
-        eventsListView.emptyView = eventsEmptyView
-
-        eventsHeader.visibility = if (preferences.isHeaderEnabled) View.VISIBLE else View.GONE
-        headerTitleView.text = SimpleDateFormat("EEEE d MMMM", Locale.getDefault()).format(Date())
-
-        headerEnabledSwitch.isChecked = preferences.isHeaderEnabled
-        headerEnabledSwitch.setOnCheckedChangeListener { _, isChecked ->
-            preferences.isHeaderEnabled = isChecked
-            eventsHeader.visibility = if (isChecked) View.VISIBLE else View.GONE
-        }
-
-        calendarsRecyclerView.layoutManager = LinearLayoutManager(this)
-        calendarsRecyclerView.adapter = calendarAdapter
-        calendarsRecyclerView.isNestedScrollingEnabled = false
+        setupWidgetPreview()
+        setupSettingsViews()
 
         finishFab.setOnClickListener {
             setWidgetResult(Activity.RESULT_OK)
             finish()
         }
 
+        askPermission(Manifest.permission.READ_CALENDAR) {
+            if (it.isAccepted) {
+                supportLoaderManager.initLoader(LOADER_ID_CALENDARS, null, this)
+//                supportLoaderManager.initLoader(LOADER_ID_EVENTS, null, this)
+            } else {
+                finish()
+            }
+        }
+    }
+
+    private fun setupWidgetPreview() {
+        val views = CalendarAppWidgetProvider.createViews(this, appWidgetId)
+        appBarLayout.addView(views.apply(applicationContext, appBarLayout))
+
+        eventAdapter = EventAdapter(this, preferences)
+        eventsListView.adapter = eventAdapter
+        eventsListView.emptyView = eventsEmptyView
+    }
+
+    private fun setupSettingsViews() {
+        setupHeaderSettings()
+        setupCalendarsSettings()
+        setupIndicatorSettings()
+    }
+
+    private fun setupHeaderSettings() {
+        headerEnabledSwitch.isChecked = preferences.isHeaderEnabled
+        headerEnabledSwitch.setOnCheckedChangeListener { _, isChecked ->
+            preferences.isHeaderEnabled = isChecked
+            eventsHeader.visibility = if (isChecked) View.VISIBLE else View.GONE
+        }
+    }
+
+    private fun setupCalendarsSettings() {
+        calendarsRecyclerView.layoutManager = LinearLayoutManager(this)
+        calendarsRecyclerView.adapter = calendarAdapter
+        calendarsRecyclerView.isNestedScrollingEnabled = false
+    }
+
+    private fun setupIndicatorSettings() {
         indicatorStyleSpinner.adapter = ArrayAdapter.createFromResource(
             this,
             R.array.indicator_styles,
@@ -94,15 +118,6 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
                     WidgetPreferences.IndicatorStyle.values().find { it.ordinal == position }
                 preferences.indicatorStyle = style ?: WidgetPreferences.IndicatorStyle.Circle
                 eventAdapter.notifyDataSetChanged()
-            }
-        }
-
-        askPermission(Manifest.permission.READ_CALENDAR) {
-            if (it.isAccepted) {
-                supportLoaderManager.initLoader(LOADER_ID_CALENDARS, null, this)
-//                supportLoaderManager.initLoader(LOADER_ID_EVENTS, null, this)
-            } else {
-                finish()
             }
         }
     }
@@ -189,19 +204,12 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
 
     private fun updateWidget() {
         CalendarAppWidgetProvider.updateAllWidgets(this)
-        CalendarAppWidgetProvider.updateEventList(
-            this,
-            appWidgetId
-        )
+        CalendarAppWidgetProvider.updateEventList(this, appWidgetId)
     }
 
     private fun savePreferences() {
         preferences.saveSelectedCalendars(calendarAdapter.getSelectedCalendars())
-        preferences.saveName(
-            CalendarAppWidgetProvider.getWidgetIds(
-                this
-            ).size
-        )
+        preferences.saveName(CalendarAppWidgetProvider.getWidgetIds(this).size)
     }
 
     companion object {
