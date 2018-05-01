@@ -14,9 +14,6 @@ import android.support.v4.content.CursorLoader
 import android.support.v4.content.Loader
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.ListView
 import com.github.florent37.runtimepermission.kotlin.askPermission
 import kotlinx.android.synthetic.main.activity_configure_widget.*
@@ -102,28 +99,10 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
     }
 
     private fun setupIndicatorSettings() {
-        indicatorStyleSpinner.adapter = ArrayAdapter.createFromResource(
-            this,
-            R.array.indicator_styles,
-            android.R.layout.simple_spinner_item
-        ).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        }
-        indicatorStyleSpinner.setSelection(preferences.indicatorStyle.ordinal)
-        indicatorStyleSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                val style =
-                    WidgetPreferences.IndicatorStyle.values().find { it.ordinal == position }
-                preferences.indicatorStyle = style ?: WidgetPreferences.IndicatorStyle.Circle
-                eventAdapter.notifyDataSetChanged()
-            }
+        indicatorStyleRadioGroup.check(preferences.indicatorStyle.id)
+        indicatorStyleRadioGroup.setOnCheckedChangeListener { _, checkedId ->
+            preferences.indicatorStyle = WidgetPreferences.IndicatorStyle.fromId(checkedId)!!
+            eventAdapter.notifyDataSetChanged()
         }
     }
 
