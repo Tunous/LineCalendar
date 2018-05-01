@@ -17,10 +17,9 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.ListView
 import com.github.florent37.runtimepermission.kotlin.askPermission
 import kotlinx.android.synthetic.main.activity_configure_widget.*
-import kotlinx.android.synthetic.main.view_events_header.*
-import kotlinx.android.synthetic.main.widget_calendar.*
 import me.thanel.linecalendar.R
 import me.thanel.linecalendar.calendar.CalendarData
 import me.thanel.linecalendar.preference.WidgetPreferences
@@ -46,8 +45,9 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
             return
         }
         preferences = WidgetPreferences(this, appWidgetId)
+        eventAdapter = EventAdapter(this, preferences)
 
-        setupWidgetPreview()
+        updateWidgetPreview()
         setupSettingsViews()
 
         finishFab.setOnClickListener {
@@ -59,18 +59,26 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
             if (it.isAccepted) {
                 supportLoaderManager.initLoader(LOADER_ID_CALENDARS, null, this)
             } else {
+                setWidgetResult(Activity.RESULT_CANCELED)
                 finish()
             }
         }
     }
 
-    private fun setupWidgetPreview() {
-        val views = CalendarAppWidgetProvider.createViews(this, appWidgetId)
-        appBarLayout.addView(views.apply(applicationContext, appBarLayout))
+    private fun updateWidgetPreview() {
+        // Remove all views in case if the widget was previously created
+        appBarLayout.removeAllViews()
 
-        eventAdapter = EventAdapter(this, preferences)
-        eventsListView.adapter = eventAdapter
-        eventsListView.emptyView = eventsEmptyView
+        // Create widget views with new settings
+        val views = CalendarAppWidgetProvider.createViews(this, appWidgetId)
+        val widgetView = views.apply(applicationContext, appBarLayout)
+        appBarLayout.addView(widgetView)
+
+        // Initialize list
+        widgetView.findViewById<ListView>(R.id.eventsListView).apply {
+            adapter = eventAdapter
+            emptyView = widgetView.findViewById(R.id.eventsEmptyView)
+        }
     }
 
     private fun setupSettingsViews() {
@@ -83,7 +91,7 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         headerEnabledSwitch.isChecked = preferences.isHeaderEnabled
         headerEnabledSwitch.setOnCheckedChangeListener { _, isChecked ->
             preferences.isHeaderEnabled = isChecked
-            eventsHeader.visibility = if (isChecked) View.VISIBLE else View.GONE
+            updateWidgetPreview()
         }
     }
 
