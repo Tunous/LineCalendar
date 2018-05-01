@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.TextView
 import kotlinx.android.synthetic.main.item_calendar.view.*
 import me.thanel.linecalendar.R
 import me.thanel.linecalendar.calendar.CalendarData
@@ -26,7 +25,7 @@ class CalendarAdapter :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val calendarData = getItem(position)
         holder.calendarData = calendarData
-        holder.calendarNameView.text = calendarData.name
+        holder.calendarCheckBox.text = calendarData.name
         holder.calendarCheckBox.isChecked = calendarData.isChecked
         CompoundButtonCompat.setButtonTintList(
             holder.calendarCheckBox,
@@ -40,15 +39,11 @@ class CalendarAdapter :
         .mapTo(mutableSetOf()) { it.id }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val calendarNameView: TextView = itemView.calendarNameView
         val calendarCheckBox: CheckBox = itemView.calendarCheckBox
 
         var calendarData: CalendarData? = null
 
         init {
-            itemView.setOnClickListener {
-                calendarCheckBox.toggle()
-            }
             calendarCheckBox.setOnCheckedChangeListener { _, isChecked ->
                 calendarData?.isChecked = isChecked
             }
