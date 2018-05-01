@@ -1,4 +1,4 @@
-package me.thanel.linecalendar.widget
+package me.thanel.linecalendar.event
 
 import android.content.ContentUris
 import android.net.Uri
@@ -14,6 +14,7 @@ object EventLoader {
         CalendarContract.Instances.BEGIN,
         CalendarContract.Instances.ALL_DAY
     )
+
     const val PROJECTION_ID_INDEX = 0
     const val PROJECTION_EVENT_ID_INDEX = 1
     const val PROJECTION_TITLE_INDEX = 2

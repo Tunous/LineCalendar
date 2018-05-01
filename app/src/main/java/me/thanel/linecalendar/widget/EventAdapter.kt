@@ -1,57 +1,28 @@
 package me.thanel.linecalendar.widget
 
 import android.content.Context
-import android.database.Cursor
-import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CursorAdapter
-import android.widget.ImageView
-import android.widget.TextView
-import kotlinx.android.synthetic.main.item_event.view.*
-import me.thanel.linecalendar.R
+import android.widget.BaseAdapter
+import me.thanel.linecalendar.event.provider.DemoEventDataProvider
 import me.thanel.linecalendar.preference.WidgetPreferences
-import me.thanel.linecalendar.util.formatEventTimeText
-import me.thanel.linecalendar.util.getTintedBitmap
 
 class EventAdapter(
     context: Context,
-    private val preferences: WidgetPreferences
-) : CursorAdapter(context, null, 0) {
-    override fun newView(context: Context, cursor: Cursor?, parent: ViewGroup): View {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val view = layoutInflater.inflate(R.layout.item_event, parent, false)
-        view.tag = ViewHolder(view)
-        return view
-    }
+    preferences: WidgetPreferences
+) : BaseAdapter() {
+    private val appContext = context.applicationContext
+    private val dataProvider =
+        DemoEventDataProvider(appContext)
+    private val factory = CalendarRemoteViewsFactory(appContext, preferences, dataProvider)
 
-    override fun bindView(view: View, context: Context, cursor: Cursor?) {
-        var title = ""
-        var color = 0xFFF
-        var startTime = 0L
-        var allDay = false
-        if (cursor != null) {
-            title = cursor.getString(EventLoader.PROJECTION_TITLE_INDEX) ?: ""
-            color = cursor.getInt(EventLoader.PROJECTION_DISPLAY_COLOR_INDEX)
-            startTime = cursor.getLong(EventLoader.PROJECTION_START_TIME_INDEX)
-            allDay = cursor.getInt(EventLoader.PROJECTION_ALL_DAY_INDEX) != 0
-        }
+    override fun getCount(): Int = dataProvider.events.size
 
-        val resId = when (preferences.indicatorStyle) {
-            WidgetPreferences.IndicatorStyle.Circle -> R.drawable.shape_circle_small
-            WidgetPreferences.IndicatorStyle.RoundedRectangle -> R.drawable.shape_rounded_rect_small
-        }
-        with(view.tag as ViewHolder) {
-            eventColorIcon.setImageBitmap(getTintedBitmap(context, resId, color))
-            eventTitleView.text = title
-            eventTimeView.text = formatEventTimeText(context, startTime, allDay)
-        }
-    }
+    override fun getItem(position: Int): Any = dataProvider.events[position]
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val eventColorIcon: ImageView = itemView.eventColorIcon
-        val eventTitleView: TextView = itemView.eventTitleView
-        val eventTimeView: TextView = itemView.eventTimeView
-    }
+    override fun getItemId(position: Int): Long = position.toLong()
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View =
+        factory.getViewAt(position)
+            .apply(appContext, parent)
 }

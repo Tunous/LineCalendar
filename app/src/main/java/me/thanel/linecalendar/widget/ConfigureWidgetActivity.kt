@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.widget_calendar.*
 import me.thanel.linecalendar.R
 import me.thanel.linecalendar.calendar.CalendarAdapter
 import me.thanel.linecalendar.calendar.CalendarData
+import me.thanel.linecalendar.event.EventLoader
 import me.thanel.linecalendar.preference.WidgetPreferences
 import java.text.SimpleDateFormat
 import java.util.*
@@ -31,7 +32,7 @@ import java.util.*
 class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor> {
     private var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
     private lateinit var preferences: WidgetPreferences
-    private lateinit var eventAdapter: DemoEventAdapter
+    private lateinit var eventAdapter: EventAdapter
     private val calendarAdapter = CalendarAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +50,7 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         }
         preferences = WidgetPreferences(this, appWidgetId)
 
-        eventAdapter = DemoEventAdapter(this, preferences)
+        eventAdapter = EventAdapter(this, preferences)
         eventsListView.adapter = eventAdapter
         eventsListView.emptyView = eventsEmptyView
 

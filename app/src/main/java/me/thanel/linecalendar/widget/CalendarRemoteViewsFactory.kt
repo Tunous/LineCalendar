@@ -1,6 +1,5 @@
 package me.thanel.linecalendar.widget
 
-import android.annotation.SuppressLint
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
@@ -9,77 +8,39 @@ import android.provider.CalendarContract
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import me.thanel.linecalendar.R
+import me.thanel.linecalendar.event.provider.EventDataProvider
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.util.ColorMapper
 import me.thanel.linecalendar.util.formatEventTimeText
 import me.thanel.linecalendar.util.getTintedBitmap
-import me.thanel.linecalendar.util.hasGrantedCalendarPermission
 
 class CalendarRemoteViewsFactory(
     private val context: Context,
-    appWidgetId: Int
+    private val preferences: WidgetPreferences,
+    private val dataProvider: EventDataProvider
 ) : RemoteViewsService.RemoteViewsFactory {
-    private val preferences = WidgetPreferences(context, appWidgetId)
     private var cursor: Cursor? = null
 
-    override fun onCreate() {
-    }
+    override fun onCreate() = Unit
 
-    override fun getLoadingView(): RemoteViews? {
-        return null
-    }
+    override fun getLoadingView(): RemoteViews? = null
 
-    override fun getItemId(position: Int): Long {
-        return if (cursor?.moveToPosition(position) == true) {
-            cursor!!.getLong(EventLoader.PROJECTION_EVENT_ID_INDEX)
-        } else {
-            position.toLong()
-        }
-    }
+    override fun getItemId(position: Int): Long = position.toLong()
 
-    @SuppressLint("MissingPermission")
-    override fun onDataSetChanged() {
-        cursor?.close()
-        cursor = null
+    override fun onDataSetChanged() = dataProvider.onDataSetChanged()
 
-        if (!context.hasGrantedCalendarPermission()) {
-            return
-        }
+    override fun hasStableIds(): Boolean = true
 
-        val selectedCalendars = preferences.getSelectedCalendars()
-        cursor = context.contentResolver.query(
-            EventLoader.getUri(),
-            EventLoader.PROJECTION,
-            EventLoader.getSelection(selectedCalendars),
-            EventLoader.getSelectionArgs(selectedCalendars),
-            EventLoader.getSortOrder()
-        )
-    }
-
-    override fun hasStableIds(): Boolean {
-        return true
-    }
-
-    override fun getViewAt(position: Int): RemoteViews? {
-        val localCursor = cursor
-        if (localCursor?.moveToPosition(position) != true) {
-            // TODO: Error
-            return null
-        }
-
-        val eventId = localCursor.getLong(EventLoader.PROJECTION_EVENT_ID_INDEX)
-        val title = localCursor.getString(EventLoader.PROJECTION_TITLE_INDEX) ?: ""
-        val color = localCursor.getInt(EventLoader.PROJECTION_DISPLAY_COLOR_INDEX)
-        val startTime = localCursor.getLong(EventLoader.PROJECTION_START_TIME_INDEX)
-        val allDay = localCursor.getInt(EventLoader.PROJECTION_ALL_DAY_INDEX) != 0
+    override fun getViewAt(position: Int): RemoteViews {
+        val event = dataProvider.getEvent(position)
 
         val intent = Intent().apply {
-            data = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
+            data = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.id)
         }
 
         return RemoteViews(context.packageName, R.layout.item_event).apply {
-            setTextViewText(R.id.eventTitleView, title)
-            val timeText = formatEventTimeText(context, startTime, allDay)
+            setTextViewText(R.id.eventTitleView, event.title)
+            val timeText = formatEventTimeText(context, event.startTime, event.allDay)
             setTextViewText(R.id.eventTimeView, timeText)
             setOnClickFillInIntent(R.id.eventView, intent)
 
@@ -88,11 +49,7 @@ class CalendarRemoteViewsFactory(
                 WidgetPreferences.IndicatorStyle.RoundedRectangle -> R.drawable.shape_rounded_rect_small
             }
 
-            val circle = getTintedBitmap(
-                context,
-                resId,
-                ColorMapper.getDisplayColor(color)
-            )
+            val circle = getTintedBitmap(context, resId, ColorMapper.getDisplayColor(event.color))
             setImageViewBitmap(R.id.eventColorIcon, circle)
         }
     }
