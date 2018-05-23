@@ -1,78 +1,22 @@
 package me.thanel.linecalendar.preference
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.preference.PreferenceManager
 
-class WidgetPreferences(context: Context, appWidgetId: Int) {
-    private val keyPrefix = "appWidget${appWidgetId}_"
-    private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+class WidgetPreferences(
+    context: Context,
+    appWidgetId: Int
+) : PreferenceContainer(context, "appWidget${appWidgetId}_") {
+    private var selectedCalendars: Set<String> by bindPreference(emptySet())
 
-    fun getSelectedCalendars(): Set<Long> =
-        preferences.getStringSet(getWidgetKey(KEY_SELECTED_CALENDARS), emptySet())
-            .mapTo(mutableSetOf()) { it.toLong() }
-
-    fun saveSelectedCalendars(selectedCalendars: Set<Long>): Boolean {
-        return preferences.edit()
-            .putStringSet(
-                getWidgetKey(KEY_SELECTED_CALENDARS),
-                selectedCalendars.mapTo(mutableSetOf()) { it.toString() }
-            )
-            .commit()
-    }
-
-    fun getName(numWidgets: Int): String =
-        preferences.getString(getWidgetKey(KEY_NAME), "Widget $numWidgets")
-
-    fun saveName(numWidgets: Int): Boolean {
-        return if (!preferences.contains(getWidgetKey(KEY_NAME))) {
-            preferences.edit()
-                .putString(getWidgetKey(KEY_NAME), "Widget $numWidgets")
-                .commit()
-        } else {
-            true
-        }
-    }
-
-    var isHeaderEnabled: Boolean
-        get() = preferences.getBoolean(getWidgetKey(KEY_HEADER_ENABLED), true)
-        @SuppressLint("ApplySharedPref")
+    var selectedCalendarIds: Set<Long>
+        get() = selectedCalendars.map { it.toLong() }.toSet()
         set(value) {
-            preferences.edit()
-                .putBoolean(getWidgetKey(KEY_HEADER_ENABLED), value)
-                .commit()
+            selectedCalendars = value.map { it.toString() }.toSet()
         }
 
-    var indicatorStyle: IndicatorStyle
-        get() = IndicatorStyle.valueOf(
-            preferences.getString(
-                getWidgetKey(KEY_INDICATOR_STYLE),
-                IndicatorStyle.Circle.name
-            )
-        )
-        @SuppressLint("ApplySharedPref")
-        set(value) {
-            preferences.edit()
-                .putString(getWidgetKey(KEY_INDICATOR_STYLE), value.name)
-                .commit()
-        }
+    var name: String by bindPreference("")
 
-    fun clear(): Boolean {
-        val editor = preferences.edit()
-        for ((key, _) in preferences.all) {
-            if (key.startsWith(keyPrefix)) {
-                editor.remove(key)
-            }
-        }
-        return editor.commit()
-    }
+    var isHeaderEnabled: Boolean by bindPreference(true)
 
-    private fun getWidgetKey(key: String) = "$keyPrefix$key"
-
-    companion object {
-        private const val KEY_SELECTED_CALENDARS = "selectedCalendars"
-        private const val KEY_NAME = "name"
-        private const val KEY_HEADER_ENABLED = "headerEnabled"
-        private const val KEY_INDICATOR_STYLE = "indicatorStyle"
-    }
+    var indicatorStyle: IndicatorStyle by bindPreference(IndicatorStyle.Circle)
 }

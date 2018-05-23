@@ -41,9 +41,8 @@ class WidgetListActivity : AppCompatActivity() {
         updateViewsVisibility(hasGrantedCalendarPermission())
 
         val widgetIds = CalendarAppWidgetProvider.getWidgetIds(this)
-        val numWidgets = widgetIds.size
         val widgetInfos = widgetIds.map {
-            WidgetInfo(it, WidgetPreferences(this, it).getName(numWidgets))
+            WidgetInfo(it, WidgetPreferences(this, it).name)
         }
         adapter.submitList(widgetInfos)
     }

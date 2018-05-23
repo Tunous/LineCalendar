@@ -62,6 +62,10 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
                 finish()
             }
         }
+
+        if (preferences.name.isBlank()) {
+            preferences.name = "Widget " + CalendarAppWidgetProvider.getWidgetIds(this).size
+        }
     }
 
     private fun updateWidgetPreview() {
@@ -143,7 +147,7 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
                     return
                 }
 
-                val selectedCalendars = preferences.getSelectedCalendars()
+                val selectedCalendars = preferences.selectedCalendarIds
                 val calendars = mutableListOf<CalendarData>()
                 if (data.moveToFirst()) {
                     do {
@@ -179,8 +183,7 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
     }
 
     private fun savePreferences() {
-        preferences.saveSelectedCalendars(calendarAdapter.getSelectedCalendars())
-        preferences.saveName(CalendarAppWidgetProvider.getWidgetIds(this).size)
+        preferences.selectedCalendarIds = calendarAdapter.getSelectedCalendars()
     }
 
     companion object {
