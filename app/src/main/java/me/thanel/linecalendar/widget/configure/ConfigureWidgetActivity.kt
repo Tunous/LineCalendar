@@ -14,6 +14,8 @@ import android.support.v4.content.CursorLoader
 import android.support.v4.content.Loader
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.ListView
 import com.github.florent37.runtimepermission.kotlin.askPermission
 import kotlinx.android.synthetic.main.activity_configure_widget.*
@@ -85,9 +87,26 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
     }
 
     private fun setupSettingsViews() {
+        setupNameSettings()
         setupHeaderSettings()
         setupCalendarsSettings()
         setupIndicatorSettings()
+    }
+
+    private fun setupNameSettings() {
+        widgetNameInputView.text.clear()
+        widgetNameInputView.text.append(preferences.name)
+        widgetNameInputView.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                preferences.name = s?.toString() ?: "Unnamed"
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
     }
 
     private fun setupHeaderSettings() {
