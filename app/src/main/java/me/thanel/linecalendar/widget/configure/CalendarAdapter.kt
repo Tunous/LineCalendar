@@ -13,13 +13,13 @@ import me.thanel.linecalendar.R
 import me.thanel.linecalendar.calendar.CalendarData
 import me.thanel.linecalendar.util.ColorMapper
 
-class CalendarAdapter :
+class CalendarAdapter(private val onCheckedChangeListener: () -> Unit) :
     ListAdapter<CalendarData, CalendarAdapter.ViewHolder>(CalendarData.DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val from = LayoutInflater.from(parent.context)
         val view = from.inflate(R.layout.item_calendar, parent, false)
-        return ViewHolder(view)
+        return ViewHolder(view, onCheckedChangeListener)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -38,7 +38,17 @@ class CalendarAdapter :
         .filter { it.isChecked }
         .mapTo(mutableSetOf()) { it.id }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    fun setSelectedCalendars(selectedIds: Set<Long>) {
+        for (i in 0 until itemCount) {
+            val calendarData = getItem(i)
+            calendarData.isChecked = calendarData.id in selectedIds
+        }
+    }
+
+    class ViewHolder(
+        itemView: View,
+        private val onCheckedChangeListener: () -> Unit
+    ) : RecyclerView.ViewHolder(itemView) {
         val calendarCheckBox: CheckBox = itemView.calendarCheckBox
 
         var calendarData: CalendarData? = null
@@ -46,6 +56,7 @@ class CalendarAdapter :
         init {
             calendarCheckBox.setOnCheckedChangeListener { _, isChecked ->
                 calendarData?.isChecked = isChecked
+                onCheckedChangeListener.invoke()
             }
         }
     }

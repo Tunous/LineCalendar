@@ -17,6 +17,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.ListView
+import android.widget.TextView
 import com.github.florent37.runtimepermission.kotlin.askPermission
 import kotlinx.android.synthetic.main.activity_configure_widget.*
 import kotlinx.android.synthetic.main.content_configure_widget.*
@@ -29,8 +30,9 @@ import me.thanel.linecalendar.widget.CalendarAppWidgetProvider
 class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor> {
     private var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
     private lateinit var preferences: WidgetPreferences
+    private lateinit var tempPreferences: WidgetPreferences
     private lateinit var eventAdapter: EventAdapter
-    private val calendarAdapter = CalendarAdapter()
+    private val calendarAdapter = CalendarAdapter(::onCalendarCheckedChange)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,13 +47,26 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
             finish()
             return
         }
+
         preferences = WidgetPreferences(this, appWidgetId)
-        eventAdapter = EventAdapter(this, preferences)
+        if (preferences.name.isBlank()) {
+            preferences.name = "Widget " + CalendarAppWidgetProvider.getWidgetIds(this).size
+        }
+        tempPreferences = WidgetPreferences(this, AppWidgetManager.INVALID_APPWIDGET_ID)
+        tempPreferences.setFrom(preferences)
+
+        eventAdapter = EventAdapter(this, tempPreferences)
 
         updateWidgetPreview()
         setupSettingsViews()
 
+        resetFab.setOnClickListener {
+            tempPreferences.setFrom(preferences)
+            setupSettingsViews()
+        }
+
         finishFab.setOnClickListener {
+            savePreferences()
             setWidgetResult(Activity.RESULT_OK)
             finish()
         }
@@ -64,20 +79,17 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
                 finish()
             }
         }
-
-        if (preferences.name.isBlank()) {
-            preferences.name = "Widget " + CalendarAppWidgetProvider.getWidgetIds(this).size
-        }
     }
 
     private fun updateWidgetPreview() {
         // Remove all views in case if the widget was previously created
-        appBarLayout.removeAllViews()
+        previewHolder.removeAllViews()
 
         // Create widget views with new settings
-        val views = CalendarAppWidgetProvider.createViews(this, appWidgetId)
-        val widgetView = views.apply(applicationContext, appBarLayout)
-        appBarLayout.addView(widgetView)
+        val views =
+            CalendarAppWidgetProvider.createViews(this, AppWidgetManager.INVALID_APPWIDGET_ID)
+        val widgetView = views.apply(applicationContext, previewHolder)
+        previewHolder.addView(widgetView)
 
         // Initialize list
         widgetView.findViewById<ListView>(R.id.eventsListView).apply {
@@ -91,14 +103,23 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         setupHeaderSettings()
         setupCalendarsSettings()
         setupIndicatorSettings()
+        updateResetButtonVisibility()
+    }
+
+    private fun updateResetButtonVisibility() {
+        if (preferences != tempPreferences) {
+            resetFab.show()
+        } else {
+            resetFab.hide()
+        }
     }
 
     private fun setupNameSettings() {
-        widgetNameInputView.text.clear()
-        widgetNameInputView.text.append(preferences.name)
+        widgetNameInputView.setText(tempPreferences.name, TextView.BufferType.EDITABLE)
         widgetNameInputView.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                preferences.name = s?.toString() ?: "Unnamed"
+                tempPreferences.name = s?.toString() ?: "Unnamed"
+                updateResetButtonVisibility()
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -110,31 +131,29 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
     }
 
     private fun setupHeaderSettings() {
-        headerEnabledSwitch.isChecked = preferences.isHeaderEnabled
+        headerEnabledSwitch.isChecked = tempPreferences.isHeaderEnabled
         headerEnabledSwitch.setOnCheckedChangeListener { _, isChecked ->
-            preferences.isHeaderEnabled = isChecked
+            tempPreferences.isHeaderEnabled = isChecked
+            updateResetButtonVisibility()
             updateWidgetPreview()
         }
     }
 
     private fun setupCalendarsSettings() {
         calendarsRecyclerView.layoutManager = LinearLayoutManager(this)
-        calendarsRecyclerView.adapter = calendarAdapter
         calendarsRecyclerView.isNestedScrollingEnabled = false
+        calendarsRecyclerView.adapter = calendarAdapter
+        calendarAdapter.setSelectedCalendars(tempPreferences.selectedCalendarIds)
+        calendarAdapter.notifyDataSetChanged()
     }
 
     private fun setupIndicatorSettings() {
-        indicatorStyleRadioGroup.check(preferences.indicatorStyle.id)
+        indicatorStyleRadioGroup.check(tempPreferences.indicatorStyle.id)
         indicatorStyleRadioGroup.setOnCheckedChangeListener { _, checkedId ->
-            preferences.indicatorStyle = IndicatorStyle.fromId(checkedId)!!
+            tempPreferences.indicatorStyle = IndicatorStyle.fromId(checkedId)!!
+            updateResetButtonVisibility()
             eventAdapter.notifyDataSetChanged()
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        savePreferences()
-        updateWidget()
     }
 
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
@@ -166,7 +185,7 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
                     return
                 }
 
-                val selectedCalendars = preferences.selectedCalendarIds
+                val selectedCalendars = tempPreferences.selectedCalendarIds
                 val calendars = mutableListOf<CalendarData>()
                 if (data.moveToFirst()) {
                     do {
@@ -186,6 +205,11 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         }
     }
 
+    private fun onCalendarCheckedChange() {
+        tempPreferences.selectedCalendarIds = calendarAdapter.getSelectedCalendars()
+        updateResetButtonVisibility()
+    }
+
     override fun onLoaderReset(loader: Loader<Cursor>) {
         when (loader.id) {
             LOADER_ID_CALENDARS -> calendarAdapter.submitList(emptyList())
@@ -196,13 +220,10 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         setResult(resultCode, Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId))
     }
 
-    private fun updateWidget() {
+    private fun savePreferences() {
+        preferences.setFrom(tempPreferences)
         CalendarAppWidgetProvider.updateAllWidgets(this)
         CalendarAppWidgetProvider.updateEventList(this, appWidgetId)
-    }
-
-    private fun savePreferences() {
-        preferences.selectedCalendarIds = calendarAdapter.getSelectedCalendars()
     }
 
     companion object {
