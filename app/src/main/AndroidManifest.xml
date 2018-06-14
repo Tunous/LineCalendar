@@ -15,8 +15,7 @@
 
         <activity
             android:name=".widget.configure.ConfigureWidgetActivity"
-            android:launchMode="singleInstance"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:launchMode="singleInstance">
 
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
