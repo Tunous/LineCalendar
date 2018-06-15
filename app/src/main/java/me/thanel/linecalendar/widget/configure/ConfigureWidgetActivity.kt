@@ -16,7 +16,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
-import android.widget.ListView
 import android.widget.TextView
 import com.github.florent37.runtimepermission.kotlin.askPermission
 import kotlinx.android.synthetic.main.activity_configure_widget.*
@@ -82,20 +81,11 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
     }
 
     private fun updateWidgetPreview() {
-        // Remove all views in case if the widget was previously created
-        previewHolder.removeAllViews()
-
-        // Create widget views with new settings
-        val views =
-            CalendarAppWidgetProvider.createViews(this, AppWidgetManager.INVALID_APPWIDGET_ID)
-        val widgetView = views.apply(applicationContext, previewHolder)
-        previewHolder.addView(widgetView)
-
-        // Initialize list
-        widgetView.findViewById<ListView>(R.id.eventsListView).apply {
-            adapter = eventAdapter
-            emptyView = widgetView.findViewById(R.id.eventsEmptyView)
-        }
+        CalendarAppWidgetProvider.inflateViews(
+            previewHolder,
+            AppWidgetManager.INVALID_APPWIDGET_ID,
+            eventAdapter
+        )
     }
 
     private fun setupSettingsViews() {

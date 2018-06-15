@@ -9,6 +9,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import kotlinx.android.synthetic.main.item_widget.view.*
 import me.thanel.linecalendar.R
+import me.thanel.linecalendar.preference.WidgetPreferences
+import me.thanel.linecalendar.widget.CalendarAppWidgetProvider
+import me.thanel.linecalendar.widget.configure.EventAdapter
 
 class WidgetListAdapter(
     private val onItemClick: (Int) -> Unit
@@ -23,6 +26,13 @@ class WidgetListAdapter(
         val widgetInfo = getItem(position)
         holder.appWidgetId = widgetInfo.id
         holder.widgetItemNameView.text = widgetInfo.name
+
+        val context = holder.previewHolder.context
+        CalendarAppWidgetProvider.inflateViews(
+            holder.previewHolder,
+            widgetInfo.id,
+            EventAdapter(context, WidgetPreferences(context, widgetInfo.id))
+        )
     }
 
     class ViewHolder(
@@ -30,11 +40,12 @@ class WidgetListAdapter(
         onItemClick: (Int) -> Unit
     ) : RecyclerView.ViewHolder(itemView) {
         val widgetItemNameView: TextView = itemView.widgetItemNameView
+        val previewHolder: ViewGroup = itemView.previewHolder
 
         var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
 
         init {
-            itemView.setOnClickListener {
+            itemView.widgetCardView.setOnClickListener {
                 onItemClick(appWidgetId)
             }
         }

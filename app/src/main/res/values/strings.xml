@@ -15,4 +15,7 @@
     <string name="indicator_style_circle">Circle</string>
     <string name="indicator_style_rounded_rect">Rounded rectangle</string>
     <string name="calendars">Calendars</string>
+    <string name="action_grant_permission">Grant permission</string>
+    <string name="select_widget_to_configure">Select a widget you want to configure.</string>
+    <string name="grant_permission_hint">Grant permission to access calendar.</string>
 </resources>

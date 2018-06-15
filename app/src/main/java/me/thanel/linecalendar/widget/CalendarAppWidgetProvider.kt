@@ -10,12 +10,15 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.CalendarContract
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ListView
 import android.widget.RemoteViews
 import me.thanel.linecalendar.R
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.receiver.EnvironmentChangedReceiver
 import me.thanel.linecalendar.util.hasGrantedCalendarPermission
 import me.thanel.linecalendar.widget.configure.ConfigureWidgetActivity
+import me.thanel.linecalendar.widget.configure.EventAdapter
 import me.thanel.linecalendar.widgetlist.WidgetListActivity
 import java.text.SimpleDateFormat
 import java.util.*
@@ -60,7 +63,24 @@ class CalendarAppWidgetProvider : AppWidgetProvider() {
             context.sendBroadcast(intent)
         }
 
-        fun createViews(context: Context, appWidgetId: Int): RemoteViews {
+        fun inflateViews(container: ViewGroup, appWidgetId: Int, eventAdapter: EventAdapter) {
+            // Remove all views in case if the widget was previously created
+            container.removeAllViews()
+
+            // Create widget views with new settings
+            val context = container.context
+            val views = createViews(context, appWidgetId)
+            val widgetView = views.apply(context.applicationContext, container)
+            container.addView(widgetView)
+
+            // Initialize list
+            widgetView.findViewById<ListView>(R.id.eventsListView).apply {
+                adapter = eventAdapter
+                emptyView = widgetView.findViewById(R.id.eventsEmptyView)
+            }
+        }
+
+        private fun createViews(context: Context, appWidgetId: Int): RemoteViews {
             val views = RemoteViews(context.packageName, R.layout.widget_calendar)
             val prefs = WidgetPreferences(context, appWidgetId)
 

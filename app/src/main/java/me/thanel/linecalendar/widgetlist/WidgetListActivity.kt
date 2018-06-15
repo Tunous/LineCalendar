@@ -60,10 +60,12 @@ class WidgetListActivity : AppCompatActivity() {
     private fun updateViewsVisibility(hasPermission: Boolean) {
         if (hasPermission) {
             widgetListRecycler.visibility = View.VISIBLE
-            grantPermissionContainer.visibility = View.GONE
+            grantPermissionButton.visibility = View.GONE
+            hintView.setText(R.string.select_widget_to_configure)
         } else {
             widgetListRecycler.visibility = View.GONE
-            grantPermissionContainer.visibility = View.VISIBLE
+            grantPermissionButton.visibility = View.VISIBLE
+            hintView.setText(R.string.grant_permission_hint)
         }
     }
 
