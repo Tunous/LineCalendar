@@ -9,6 +9,7 @@ import android.os.Build
 import android.provider.CalendarContract
 import me.thanel.linecalendar.receiver.CalendarObserverService
 
+@Suppress("unused")
 class LineaCalendarApp : Application() {
     override fun onCreate() {
         super.onCreate()

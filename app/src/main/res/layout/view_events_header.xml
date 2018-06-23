@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/eventsHeader"
     android:layout_width="match_parent"
@@ -22,18 +23,18 @@
         android:id="@+id/add_event_header_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_add" />
+        app:srcCompat="@drawable/ic_add" />
 
     <ImageView
         android:id="@+id/refresh_header_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_refresh" />
+        app:srcCompat="@drawable/ic_refresh" />
 
     <ImageView
         android:id="@+id/settings_header_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_settings" />
+        app:srcCompat="@drawable/ic_settings" />
 
 </LinearLayout>
