@@ -27,6 +27,27 @@
         android:text="@string/header"
         tools:checked="true" />
 
+    <CheckBox
+        android:id="@+id/addEventHeaderButtonToggle"
+        style="@style/ButtonWithIndent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_add_event" />
+
+    <CheckBox
+        android:id="@+id/refreshHeaderButtonToggle"
+        style="@style/ButtonWithIndent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_refresh" />
+
+    <CheckBox
+        android:id="@+id/settingsHeaderButtonToggle"
+        style="@style/ButtonWithIndent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_settings" />
+
     <TextView
         style="@style/PreferenceHeader"
         android:layout_width="match_parent"
@@ -40,14 +61,14 @@
 
         <RadioButton
             android:id="@+id/indicatorStyleNone"
-            style="@style/RadioButtonWithIndent"
+            style="@style/ButtonWithIndent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/indicator_style_none" />
 
         <RadioButton
             android:id="@+id/indicatorStyleCircle"
-            style="@style/RadioButtonWithIndent"
+            style="@style/ButtonWithIndent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableEnd="@drawable/shape_circle_small_colored"
@@ -55,7 +76,7 @@
 
         <RadioButton
             android:id="@+id/indicatorStyleRoundedRect"
-            style="@style/RadioButtonWithIndent"
+            style="@style/ButtonWithIndent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableEnd="@drawable/shape_rounded_rect_small_colored"

@@ -124,9 +124,36 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         headerEnabledSwitch.isChecked = tempPreferences.isHeaderEnabled
         headerEnabledSwitch.setOnCheckedChangeListener { _, isChecked ->
             tempPreferences.isHeaderEnabled = isChecked
+            updateHeaderButtonsEnabledState()
             updateResetButtonVisibility()
             updateWidgetPreview()
         }
+        addEventHeaderButtonToggle.isChecked = tempPreferences.showAddEventHeaderButton
+        addEventHeaderButtonToggle.setOnCheckedChangeListener { _, isChecked ->
+            tempPreferences.showAddEventHeaderButton = isChecked
+            updateResetButtonVisibility()
+            updateWidgetPreview()
+        }
+        refreshHeaderButtonToggle.isChecked = tempPreferences.showRefreshHeaderButton
+        refreshHeaderButtonToggle.setOnCheckedChangeListener { _, isChecked ->
+            tempPreferences.showRefreshHeaderButton = isChecked
+            updateResetButtonVisibility()
+            updateWidgetPreview()
+        }
+        settingsHeaderButtonToggle.isChecked = tempPreferences.showSettingsHeaderButton
+        settingsHeaderButtonToggle.setOnCheckedChangeListener { _, isChecked ->
+            tempPreferences.showSettingsHeaderButton = isChecked
+            updateResetButtonVisibility()
+            updateWidgetPreview()
+        }
+        updateHeaderButtonsEnabledState()
+    }
+
+    private fun updateHeaderButtonsEnabledState() {
+        val headerEnabled = tempPreferences.isHeaderEnabled
+        addEventHeaderButtonToggle.isEnabled = headerEnabled
+        refreshHeaderButtonToggle.isEnabled = headerEnabled
+        settingsHeaderButtonToggle.isEnabled = headerEnabled
     }
 
     private fun setupCalendarsSettings() {

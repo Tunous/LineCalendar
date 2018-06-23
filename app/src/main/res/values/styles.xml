@@ -30,7 +30,7 @@
 
     <style name="PreferenceHeader" parent="BaseAppWidget.PreferenceHeader" />
 
-    <style name="RadioButtonWithIndent">
+    <style name="ButtonWithIndent">
         <item name="android:layout_marginStart">16dp</item>
         <item name="android:paddingBottom">12dp</item>
         <item name="android:paddingEnd">16dp</item>

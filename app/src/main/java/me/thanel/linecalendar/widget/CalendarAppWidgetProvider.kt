@@ -17,6 +17,7 @@ import me.thanel.linecalendar.R
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.receiver.EnvironmentChangedReceiver
 import me.thanel.linecalendar.util.hasGrantedCalendarPermission
+import me.thanel.linecalendar.util.setViewAsVisible
 import me.thanel.linecalendar.widget.configure.ConfigureWidgetActivity
 import me.thanel.linecalendar.widget.configure.EventAdapter
 import me.thanel.linecalendar.widgetlist.WidgetListActivity
@@ -119,18 +120,21 @@ class CalendarAppWidgetProvider : AppWidgetProvider() {
             val addPendingIntent = PendingIntent.getActivity(context, appWidgetId, addIntent, 0)
             views.setOnClickPendingIntent(R.id.add_event_header_button, addPendingIntent)
             views.setImageViewResource(R.id.add_event_header_button, R.drawable.ic_add)
+            views.setViewAsVisible(R.id.add_event_header_button, prefs.showAddEventHeaderButton)
 
             val refreshIntent = Intent(EnvironmentChangedReceiver.ACTION_REFRESH)
             val refreshPendingIntent =
                 PendingIntent.getBroadcast(context, appWidgetId, refreshIntent, 0)
             views.setOnClickPendingIntent(R.id.refresh_header_button, refreshPendingIntent)
             views.setImageViewResource(R.id.refresh_header_button, R.drawable.ic_refresh)
+            views.setViewAsVisible(R.id.refresh_header_button, prefs.showRefreshHeaderButton)
 
             val settingsIntent = ConfigureWidgetActivity.getIntent(context, appWidgetId)
             val settingsPendingIntent =
                 PendingIntent.getActivity(context, appWidgetId, settingsIntent, 0)
             views.setOnClickPendingIntent(R.id.settings_header_button, settingsPendingIntent)
             views.setImageViewResource(R.id.settings_header_button, R.drawable.ic_settings)
+            views.setViewAsVisible(R.id.settings_header_button, prefs.showSettingsHeaderButton)
         }
 
         private fun setupEventsList(context: Context, appWidgetId: Int, views: RemoteViews) {

@@ -21,11 +21,20 @@ class WidgetPreferences(
 
     var indicatorStyle: IndicatorStyle by bindPreference(IndicatorStyle.Circle)
 
+    var showAddEventHeaderButton: Boolean by bindPreference(true)
+
+    var showRefreshHeaderButton: Boolean by bindPreference(true)
+
+    var showSettingsHeaderButton: Boolean by bindPreference(true)
+
     fun setFrom(other: WidgetPreferences) {
         selectedCalendars = other.selectedCalendars
         name = other.name
         isHeaderEnabled = other.isHeaderEnabled
         indicatorStyle = other.indicatorStyle
+        showAddEventHeaderButton = other.showAddEventHeaderButton
+        showRefreshHeaderButton = other.showRefreshHeaderButton
+        showSettingsHeaderButton = other.showSettingsHeaderButton
     }
 
     // TODO: Test
@@ -35,7 +44,10 @@ class WidgetPreferences(
         return ObjectsCompat.equals(selectedCalendarIds, other.selectedCalendarIds) &&
                 ObjectsCompat.equals(name, other.name) &&
                 ObjectsCompat.equals(isHeaderEnabled, other.isHeaderEnabled) &&
-                ObjectsCompat.equals(indicatorStyle, other.indicatorStyle)
+                ObjectsCompat.equals(indicatorStyle, other.indicatorStyle) &&
+                ObjectsCompat.equals(showAddEventHeaderButton, other.showAddEventHeaderButton) &&
+                ObjectsCompat.equals(showRefreshHeaderButton, other.showRefreshHeaderButton) &&
+                ObjectsCompat.equals(showSettingsHeaderButton, other.showSettingsHeaderButton)
     }
 
     // TODO: Test
@@ -43,7 +55,10 @@ class WidgetPreferences(
         selectedCalendarIds,
         name,
         isHeaderEnabled,
-        indicatorStyle
+        indicatorStyle,
+        showAddEventHeaderButton,
+        showRefreshHeaderButton,
+        showSettingsHeaderButton
     )
 
 }
