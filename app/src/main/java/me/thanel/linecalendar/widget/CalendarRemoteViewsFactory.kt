@@ -39,7 +39,7 @@ class CalendarRemoteViewsFactory(
 
         return RemoteViews(context.packageName, R.layout.item_event).apply {
             setTextViewText(R.id.eventTitleView, event.title)
-            val timeText = formatEventTimeText(context, event.startTime, event.allDay)
+            val timeText = context.formatEventTimeText(event.startTime, event.allDay)
             setTextViewText(R.id.eventTimeView, timeText)
             setOnClickFillInIntent(R.id.eventView, intent)
 
@@ -51,7 +51,7 @@ class CalendarRemoteViewsFactory(
 
             if (resId != null) {
                 val circle =
-                    getTintedBitmap(context, resId, ColorMapper.getDisplayColor(event.color))
+                    context.getTintedBitmap(resId, ColorMapper.getDisplayColor(event.color))
                 setImageViewBitmap(R.id.eventColorIcon, circle)
                 setViewVisibility(R.id.eventColorIcon, View.VISIBLE)
             } else {

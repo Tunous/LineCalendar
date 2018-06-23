@@ -118,16 +118,19 @@ class CalendarAppWidgetProvider : AppWidgetProvider() {
                 .setData(CalendarContract.Events.CONTENT_URI)
             val addPendingIntent = PendingIntent.getActivity(context, appWidgetId, addIntent, 0)
             views.setOnClickPendingIntent(R.id.add_event_header_button, addPendingIntent)
+            views.setImageViewResource(R.id.add_event_header_button, R.drawable.ic_add)
 
             val refreshIntent = Intent(EnvironmentChangedReceiver.ACTION_REFRESH)
             val refreshPendingIntent =
                 PendingIntent.getBroadcast(context, appWidgetId, refreshIntent, 0)
             views.setOnClickPendingIntent(R.id.refresh_header_button, refreshPendingIntent)
+            views.setImageViewResource(R.id.refresh_header_button, R.drawable.ic_refresh)
 
             val settingsIntent = ConfigureWidgetActivity.getIntent(context, appWidgetId)
             val settingsPendingIntent =
                 PendingIntent.getActivity(context, appWidgetId, settingsIntent, 0)
             views.setOnClickPendingIntent(R.id.settings_header_button, settingsPendingIntent)
+            views.setImageViewResource(R.id.settings_header_button, R.drawable.ic_settings)
         }
 
         private fun setupEventsList(context: Context, appWidgetId: Int, views: RemoteViews) {

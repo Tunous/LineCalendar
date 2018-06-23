@@ -16,16 +16,14 @@ fun Context.hasGrantedCalendarPermission(): Boolean {
     return result == PermissionChecker.PERMISSION_GRANTED
 }
 
-fun getTintedBitmap(context: Context, @DrawableRes drawableRes: Int, @ColorInt tint: Int): Bitmap {
-    val drawable = ContextCompat.getDrawable(context, drawableRes)!!
+fun Context.getTintedBitmap(@DrawableRes drawableRes: Int, @ColorInt tint: Int): Bitmap {
+    val drawable = ContextCompat.getDrawable(this, drawableRes)!!
     val bitmap = Bitmap.createBitmap(
         drawable.intrinsicWidth,
         drawable.intrinsicHeight,
         Bitmap.Config.ARGB_8888
     )
-    val canvas = Canvas().apply {
-        setBitmap(bitmap)
-    }
+    val canvas = Canvas(bitmap)
     val wrappedDrawable = DrawableCompat.wrap(drawable).mutate()
     wrappedDrawable.setBounds(
         0,
@@ -38,7 +36,7 @@ fun getTintedBitmap(context: Context, @DrawableRes drawableRes: Int, @ColorInt t
     return bitmap
 }
 
-fun formatEventTimeText(context: Context, startTime: Long, allDay: Boolean): CharSequence {
+fun Context.formatEventTimeText(startTime: Long, allDay: Boolean): CharSequence {
     if (allDay) {
         return DateUtils.getRelativeTimeSpanString(
             startTime,
@@ -48,7 +46,7 @@ fun formatEventTimeText(context: Context, startTime: Long, allDay: Boolean): Cha
         )
     }
     return DateUtils.getRelativeDateTimeString(
-        context,
+        this,
         startTime,
         DateUtils.MINUTE_IN_MILLIS,
         DateUtils.WEEK_IN_MILLIS,
