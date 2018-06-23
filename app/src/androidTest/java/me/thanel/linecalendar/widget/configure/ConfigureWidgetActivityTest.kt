@@ -48,12 +48,15 @@ class ConfigureWidgetActivityTest {
         GrantPermissionRule.grant(android.Manifest.permission.READ_CALENDAR)
 
     private lateinit var preferences: WidgetPreferences
+    private lateinit var tempPreferences: WidgetPreferences
 
     @Before
     fun initPreferences() {
         val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
         preferences = WidgetPreferences(targetContext, 1)
         preferences.clear()
+        tempPreferences = WidgetPreferences(targetContext, AppWidgetManager.INVALID_APPWIDGET_ID)
+        tempPreferences.clear()
     }
 
     @Test
@@ -69,7 +72,7 @@ class ConfigureWidgetActivityTest {
         onView(withId(R.id.headerEnabledSwitch)).check(matches(isNotChecked()))
         onView(withId(R.id.eventsHeader)).check(matches(not(isDisplayed())))
         // ...and preference updated
-        assertThat(preferences.isHeaderEnabled, equalTo(false))
+        assertThat(tempPreferences.isHeaderEnabled, equalTo(false))
     }
 
     @Test
@@ -95,6 +98,6 @@ class ConfigureWidgetActivityTest {
         onView(withId(R.id.indicatorStyleCircle)).check(matches(not(isChecked())))
         onView(withId(R.id.indicatorStyleRoundedRect)).check(matches(not(isChecked())))
         // ...and preference modified
-        assertThat(preferences.indicatorStyle, equalTo(IndicatorStyle.None))
+        assertThat(tempPreferences.indicatorStyle, equalTo(IndicatorStyle.None))
     }
 }

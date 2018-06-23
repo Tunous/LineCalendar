@@ -134,20 +134,4 @@ class WidgetPreferencesTest {
             equalTo(IndicatorStyle.RoundedRectangle.name)
         )
     }
-
-    @Test
-    fun clear_shouldRemoveWidgetPreferences() {
-        sharedPreferences.edit()
-            .putInt("appWidget1_pref", 1)
-            .putInt("appWidget2_pref", 2)
-            .putInt("otherPref", 3)
-            .commit()
-
-        val prefs = WidgetPreferences(context, 1)
-        assertThat(prefs.clear(), equalTo(true))
-
-        assertThat(sharedPreferences.contains("appWidget1_pref"), equalTo(false))
-        assertThat(sharedPreferences.contains("appWidget2_pref"), equalTo(true))
-        assertThat(sharedPreferences.contains("otherPref"), equalTo(true))
-    }
 }

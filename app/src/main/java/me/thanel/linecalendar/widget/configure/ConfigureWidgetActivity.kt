@@ -52,7 +52,7 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
             preferences.name = "Widget " + CalendarAppWidgetProvider.getWidgetIds(this).size
         }
         tempPreferences = WidgetPreferences(this, AppWidgetManager.INVALID_APPWIDGET_ID)
-        tempPreferences.setFrom(preferences)
+        tempPreferences.copyFrom(preferences)
 
         eventAdapter = EventAdapter(this, tempPreferences)
 
@@ -60,7 +60,7 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         setupSettingsViews()
 
         resetFab.setOnClickListener {
-            tempPreferences.setFrom(preferences)
+            tempPreferences.copyFrom(preferences)
             setupSettingsViews()
         }
 
@@ -97,10 +97,10 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
     }
 
     private fun updateResetButtonVisibility() {
-        if (preferences != tempPreferences) {
-            resetFab.show()
-        } else {
+        if (preferences.hasSameSettings(tempPreferences)) {
             resetFab.hide()
+        } else {
+            resetFab.show()
         }
     }
 
@@ -238,7 +238,7 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
     }
 
     private fun savePreferences() {
-        preferences.setFrom(tempPreferences)
+        preferences.copyFrom(tempPreferences)
         CalendarAppWidgetProvider.updateAllWidgets(this)
         CalendarAppWidgetProvider.updateEventList(this, appWidgetId)
     }
