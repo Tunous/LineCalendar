@@ -1,21 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
+    <string name="action_grant_permission">Grant permission</string>
     <string name="app_name">LineCalendar</string>
-    <string name="no_events">You have no events</string>
-    <string name="apply">Apply</string>
-    <!--
-        %1$d - Id of the widget
-        %2$d - Width of the widget
-        %3$d - Height of the widget
-    -->
-    <string name="widget_info">Widget nr %1$d [%2$dx%3$d]</string>
+    <string name="calendars">Calendars</string>
     <string name="grant_permission">Widget requires permission to read calendars.\nTap here to grant permission.</string>
     <string name="header">Header</string>
+    <string name="hint_add_widget">You can add widgets from your launcher.</string>
+    <string name="hint_configure_widget">Select a widget you want to configure.</string>
+    <string name="hint_grant_permission">Grant permission to access calendar.</string>
+    <string name="hint_no_widgets">No widgets created.</string>
     <string name="indicator_style">Indicator Style</string>
-    <string name="indicator_style_none">None</string>
     <string name="indicator_style_circle">Circle</string>
+    <string name="indicator_style_none">None</string>
     <string name="indicator_style_rounded_rect">Rounded rectangle</string>
-    <string name="calendars">Calendars</string>
-    <string name="action_grant_permission">Grant permission</string>
-    <string name="select_widget_to_configure">Select a widget you want to configure.</string>
-    <string name="grant_permission_hint">Grant permission to access calendar.</string>
+    <string name="name">Name</string>
+    <string name="no_events">You have no events</string>
+    <string name="widget_name">Widget name</string>
 </resources>

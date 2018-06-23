@@ -30,21 +30,31 @@ class WidgetListActivity : AppCompatActivity() {
             askPermission(Manifest.permission.READ_CALENDAR) {
                 updateViewsVisibility(it.isAccepted)
 
-                if (it.isAccepted && intent.getBooleanExtra(EXTRA_ONLY_ASK_PERMISSION, false)) {
+                if (it.isAccepted) {
                     CalendarAppWidgetProvider.updateAllWidgets(this)
                     CalendarAppWidgetProvider.updateEventList(this)
-                    finish()
+
+                    if (intent.getBooleanExtra(EXTRA_ONLY_ASK_PERMISSION, false)) {
+                        finish()
+                    }
                 }
             }
         }
 
-        updateViewsVisibility(hasGrantedCalendarPermission())
-
         val widgetIds = CalendarAppWidgetProvider.getWidgetIds(this)
-        val widgetInfos = widgetIds.map {
-            WidgetInfo(it, WidgetPreferences(this, it).name)
+        if (widgetIds.isEmpty()) {
+            emptyInfoView.visibility = View.VISIBLE
+            widgetListRecycler.visibility = View.GONE
+        } else {
+            emptyInfoView.visibility = View.GONE
+            widgetListRecycler.visibility = View.VISIBLE
+            val widgetInfos = widgetIds.map {
+                WidgetInfo(it, WidgetPreferences(this, it).name)
+            }
+            adapter.submitList(widgetInfos)
         }
-        adapter.submitList(widgetInfos)
+
+        updateViewsVisibility(hasGrantedCalendarPermission())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -59,14 +69,21 @@ class WidgetListActivity : AppCompatActivity() {
 
     private fun updateViewsVisibility(hasPermission: Boolean) {
         if (hasPermission) {
-            widgetListRecycler.visibility = View.VISIBLE
+            widgetListRecycler.visibility = if (adapter.itemCount > 0) View.VISIBLE else View.GONE
             grantPermissionButton.visibility = View.GONE
-            hintView.setText(R.string.select_widget_to_configure)
+            emptyInfoView.visibility = if (adapter.itemCount > 0) View.GONE else View.VISIBLE
         } else {
             widgetListRecycler.visibility = View.GONE
             grantPermissionButton.visibility = View.VISIBLE
-            hintView.setText(R.string.grant_permission_hint)
+            emptyInfoView.visibility = View.GONE
         }
+
+        val hintTextResId = when {
+            !hasPermission -> R.string.hint_grant_permission
+            adapter.itemCount == 0 -> R.string.hint_no_widgets
+            else -> R.string.hint_configure_widget
+        }
+        hintView.setText(hintTextResId)
     }
 
     private fun onWidgetClick(appWidgetId: Int) {
