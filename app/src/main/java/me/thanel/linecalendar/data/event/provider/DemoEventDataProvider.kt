@@ -1,9 +1,9 @@
-package me.thanel.linecalendar.event.provider
+package me.thanel.linecalendar.data.event.provider
 
 import android.content.Context
 import android.graphics.Color
 import me.thanel.linecalendar.R
-import me.thanel.linecalendar.event.EventData
+import me.thanel.linecalendar.data.event.EventData
 import java.util.concurrent.TimeUnit
 
 class DemoEventDataProvider(context: Context) : EventDataProvider {

@@ -8,7 +8,7 @@ import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import me.thanel.linecalendar.R
-import me.thanel.linecalendar.event.provider.EventDataProvider
+import me.thanel.linecalendar.data.event.provider.EventDataProvider
 import me.thanel.linecalendar.preference.IndicatorStyle
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.util.ColorMapper

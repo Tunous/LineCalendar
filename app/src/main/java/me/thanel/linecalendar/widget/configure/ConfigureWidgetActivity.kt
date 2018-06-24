@@ -20,8 +20,8 @@ import com.github.florent37.runtimepermission.kotlin.askPermission
 import kotlinx.android.synthetic.main.activity_configure_widget.*
 import kotlinx.android.synthetic.main.content_configure_widget.*
 import me.thanel.linecalendar.R
-import me.thanel.linecalendar.calendar.CalendarListItem
-import me.thanel.linecalendar.calendar.CalendarLoader
+import me.thanel.linecalendar.data.calendar.CalendarListItem
+import me.thanel.linecalendar.data.calendar.CalendarLoader
 import me.thanel.linecalendar.preference.IndicatorStyle
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.widget.CalendarAppWidgetProvider

@@ -1,10 +1,10 @@
-package me.thanel.linecalendar.event.provider
+package me.thanel.linecalendar.data.event.provider
 
 import android.content.Context
 import android.database.Cursor
 import android.graphics.Color
-import me.thanel.linecalendar.event.EventData
-import me.thanel.linecalendar.event.EventLoader
+import me.thanel.linecalendar.data.event.EventData
+import me.thanel.linecalendar.data.event.EventLoader
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.util.hasGrantedCalendarPermission
 

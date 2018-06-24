@@ -1,4 +1,4 @@
-package me.thanel.linecalendar.event
+package me.thanel.linecalendar.data.event
 
 data class EventData(
     val id: Long,

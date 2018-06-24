@@ -3,7 +3,7 @@ package me.thanel.linecalendar.widget
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.widget.RemoteViewsService
-import me.thanel.linecalendar.event.provider.CursorEventDataProvider
+import me.thanel.linecalendar.data.event.provider.CursorEventDataProvider
 import me.thanel.linecalendar.preference.WidgetPreferences
 
 class CalendarWidgetService : RemoteViewsService() {

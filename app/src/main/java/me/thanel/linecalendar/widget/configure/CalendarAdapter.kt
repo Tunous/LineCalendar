@@ -12,7 +12,7 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.item_calendar.view.*
 import kotlinx.android.synthetic.main.item_calendar_account_header.view.*
 import me.thanel.linecalendar.R
-import me.thanel.linecalendar.calendar.CalendarListItem
+import me.thanel.linecalendar.data.calendar.CalendarListItem
 import me.thanel.linecalendar.util.ColorMapper
 
 class CalendarAdapter(private val onCheckedChangeListener: () -> Unit) :

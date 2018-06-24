@@ -1,6 +1,6 @@
-package me.thanel.linecalendar.event.provider
+package me.thanel.linecalendar.data.event.provider
 
-import me.thanel.linecalendar.event.EventData
+import me.thanel.linecalendar.data.event.EventData
 
 interface EventDataProvider {
     val count: Int

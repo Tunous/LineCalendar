@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import me.thanel.linecalendar.event.provider.DemoEventDataProvider
+import me.thanel.linecalendar.data.event.provider.DemoEventDataProvider
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.widget.CalendarRemoteViewsFactory
 

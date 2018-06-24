@@ -1,4 +1,4 @@
-package me.thanel.linecalendar.calendar
+package me.thanel.linecalendar.data.calendar
 
 import android.net.Uri
 import android.provider.CalendarContract
