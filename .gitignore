@@ -2,12 +2,13 @@
 .gradle
 /local.properties
 /.idea/libraries
+/.idea/shelf
 /.idea/modules.xml
 /.idea/workspace.xml
 /.idea/caches/build_file_checksums.ser
 /.idea/misc.xml
+/.idea/assetWizardSettings.xml
 .DS_Store
 /build
 /captures
 .externalNativeBuild
-/.idea/assetWizardSettings.xml
