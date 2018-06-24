@@ -8,7 +8,6 @@ import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
-import android.provider.CalendarContract
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.CursorLoader
 import android.support.v4.content.Loader
@@ -22,6 +21,7 @@ import kotlinx.android.synthetic.main.activity_configure_widget.*
 import kotlinx.android.synthetic.main.content_configure_widget.*
 import me.thanel.linecalendar.R
 import me.thanel.linecalendar.calendar.CalendarListItem
+import me.thanel.linecalendar.calendar.CalendarLoader
 import me.thanel.linecalendar.preference.IndicatorStyle
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.widget.CalendarAppWidgetProvider
@@ -176,20 +176,13 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
         return when (id) {
             LOADER_ID_CALENDARS -> {
-                val projection = arrayOf(
-                    CalendarContract.Calendars._ID,
-                    CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
-                    CalendarContract.Calendars.CALENDAR_COLOR,
-                    CalendarContract.Calendars.ACCOUNT_NAME
-                )
                 CursorLoader(
                     this,
-                    CalendarContract.Calendars.CONTENT_URI,
-                    projection,
+                    CalendarLoader.getUri(),
+                    CalendarLoader.PROJECTION,
                     null,
                     null,
-                    "${CalendarContract.Calendars.ACCOUNT_NAME} COLLATE NOCASE ASC, " +
-                            "${CalendarContract.Calendars.CALENDAR_DISPLAY_NAME} COLLATE NOCASE ASC"
+                    CalendarLoader.getSortOrder()
                 )
             }
             else -> throw IllegalArgumentException("Unknown loader id: $id")
@@ -197,39 +190,37 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
     }
 
     override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
-        when (loader.id) {
-            LOADER_ID_CALENDARS -> {
-                if (data == null) {
-                    calendarAdapter.submitList(emptyList())
-                    return
-                }
-
-                val selectedCalendars = tempPreferences.selectedCalendarIds
-                val calendars = mutableListOf<CalendarListItem>()
-                var previousAccount: String? = null
-                if (data.moveToFirst()) {
-                    do {
-                        val id = data.getLong(0)
-                        val accountName = data.getString(3)
-
-                        if (previousAccount != accountName) {
-                            previousAccount = accountName
-                            calendars.add(CalendarListItem.HeaderItem(accountName))
-                        }
-
-                        calendars.add(
-                            CalendarListItem.CalendarItem(
-                                id,
-                                data.getString(1),
-                                data.getInt(2),
-                                accountName,
-                                selectedCalendars.contains(id) || selectedCalendars.isEmpty()
-                            )
-                        )
-                    } while (data.moveToNext())
-                }
-                calendarAdapter.submitList(calendars)
+        if (loader.id == LOADER_ID_CALENDARS) {
+            if (data == null) {
+                calendarAdapter.submitList(emptyList())
+                return
             }
+
+            val selectedCalendars = tempPreferences.selectedCalendarIds
+            val adapterData = mutableListOf<CalendarListItem>()
+            var previousAccount: String? = null
+            if (data.moveToFirst()) {
+                do {
+                    val id = data.getLong(CalendarLoader.PROJECTION_ID_INDEX)
+                    val accountName = data.getString(CalendarLoader.PROJECTION_ACCOUNT_NAME_INDEX)
+
+                    if (previousAccount != accountName) {
+                        previousAccount = accountName
+                        adapterData.add(CalendarListItem.HeaderItem(accountName))
+                    }
+
+                    adapterData.add(
+                        CalendarListItem.CalendarItem(
+                            id,
+                            data.getString(CalendarLoader.PROJECTION_CALENDAR_DISPLAY_NAME_INDEX),
+                            data.getInt(CalendarLoader.PROJECTION_CALENDAR_COLOR_INDEX),
+                            accountName,
+                            selectedCalendars.contains(id) || selectedCalendars.isEmpty()
+                        )
+                    )
+                } while (data.moveToNext())
+            }
+            calendarAdapter.submitList(adapterData)
         }
     }
 
