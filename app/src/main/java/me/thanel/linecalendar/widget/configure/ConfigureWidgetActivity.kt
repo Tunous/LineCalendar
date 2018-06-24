@@ -21,7 +21,7 @@ import com.github.florent37.runtimepermission.kotlin.askPermission
 import kotlinx.android.synthetic.main.activity_configure_widget.*
 import kotlinx.android.synthetic.main.content_configure_widget.*
 import me.thanel.linecalendar.R
-import me.thanel.linecalendar.calendar.CalendarData
+import me.thanel.linecalendar.calendar.CalendarListItem
 import me.thanel.linecalendar.preference.IndicatorStyle
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.widget.CalendarAppWidgetProvider
@@ -179,7 +179,8 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
                 val projection = arrayOf(
                     CalendarContract.Calendars._ID,
                     CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
-                    CalendarContract.Calendars.CALENDAR_COLOR
+                    CalendarContract.Calendars.CALENDAR_COLOR,
+                    CalendarContract.Calendars.ACCOUNT_NAME
                 )
                 CursorLoader(
                     this,
@@ -187,7 +188,8 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
                     projection,
                     null,
                     null,
-                    "${CalendarContract.Calendars.CALENDAR_DISPLAY_NAME} COLLATE NOCASE ASC"
+                    "${CalendarContract.Calendars.ACCOUNT_NAME} COLLATE NOCASE ASC, " +
+                            "${CalendarContract.Calendars.CALENDAR_DISPLAY_NAME} COLLATE NOCASE ASC"
                 )
             }
             else -> throw IllegalArgumentException("Unknown loader id: $id")
@@ -203,15 +205,24 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
                 }
 
                 val selectedCalendars = tempPreferences.selectedCalendarIds
-                val calendars = mutableListOf<CalendarData>()
+                val calendars = mutableListOf<CalendarListItem>()
+                var previousAccount: String? = null
                 if (data.moveToFirst()) {
                     do {
                         val id = data.getLong(0)
+                        val accountName = data.getString(3)
+
+                        if (previousAccount != accountName) {
+                            previousAccount = accountName
+                            calendars.add(CalendarListItem.HeaderItem(accountName))
+                        }
+
                         calendars.add(
-                            CalendarData(
+                            CalendarListItem.CalendarItem(
                                 id,
                                 data.getString(1),
                                 data.getInt(2),
+                                accountName,
                                 selectedCalendars.contains(id) || selectedCalendars.isEmpty()
                             )
                         )
