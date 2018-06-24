@@ -7,4 +7,9 @@
         <item>Sister\'s birthday</item>
         <item>Trip to Italy</item>
     </string-array>
+    <string-array name="header_alignments">
+        <item>Start</item>
+        <item>Center</item>
+        <item>End</item>
+    </string-array>
 </resources>

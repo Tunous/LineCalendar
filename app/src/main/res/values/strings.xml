@@ -2,9 +2,9 @@
 <resources>
     <string name="action_grant_permission">Grant permission</string>
     <string name="app_name">LineCalendar</string>
-    <string name="button_add_event">Add event button</string>
-    <string name="button_refresh">Refresh button</string>
-    <string name="button_settings">Settings button</string>
+    <string name="button_add_event">Display add event button</string>
+    <string name="button_refresh">Display refresh button</string>
+    <string name="button_settings">Display settings button</string>
     <string name="calendars">Calendars</string>
     <string name="grant_permission">Widget requires permission to read calendars.\nTap here to grant permission.</string>
     <string name="header">Header</string>
@@ -18,5 +18,6 @@
     <string name="indicator_style_rounded_rect">Rounded rectangle</string>
     <string name="name">Name</string>
     <string name="no_events">You have no events</string>
+    <string name="title_alignment">Title alignment</string>
     <string name="widget_name">Widget name</string>
 </resources>

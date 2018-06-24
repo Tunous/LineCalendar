@@ -11,15 +11,22 @@
     android:paddingTop="4dp"
     tools:showIn="@layout/widget_calendar">
 
-    <TextView
-        android:id="@+id/headerTitleView"
-        style="@style/TextWithShadow"
+    <LinearLayout
+        android:id="@+id/headerTitleViewContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        tools:text="Monday 13" />
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/headerTitleView"
+            style="@style/TextWithShadow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            tools:text="Monday 13 June" />
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/add_event_header_button"

@@ -15,6 +15,9 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.github.florent37.runtimepermission.kotlin.askPermission
 import kotlinx.android.synthetic.main.activity_configure_widget.*
@@ -22,6 +25,7 @@ import kotlinx.android.synthetic.main.content_configure_widget.*
 import me.thanel.linecalendar.R
 import me.thanel.linecalendar.data.calendar.CalendarListItem
 import me.thanel.linecalendar.data.calendar.CalendarLoader
+import me.thanel.linecalendar.preference.Alignment
 import me.thanel.linecalendar.preference.IndicatorStyle
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.widget.CalendarAppWidgetProvider
@@ -124,7 +128,7 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
         headerEnabledSwitch.isChecked = tempPreferences.isHeaderEnabled
         headerEnabledSwitch.setOnCheckedChangeListener { _, isChecked ->
             tempPreferences.isHeaderEnabled = isChecked
-            updateHeaderButtonsEnabledState()
+            updateHeaderSettingsEnabledState()
             updateResetButtonVisibility()
             updateWidgetPreview()
         }
@@ -146,14 +150,42 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
             updateResetButtonVisibility()
             updateWidgetPreview()
         }
-        updateHeaderButtonsEnabledState()
+
+        val strings = resources.getTextArray(R.array.header_alignments)
+        val alignmentAdapter = ArrayAdapter<CharSequence>(
+            this,
+            R.layout.alignment_spinner_item,
+            android.R.id.text1,
+            strings
+        )
+        alignmentAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        headerTextAlignmentSpinner.adapter = alignmentAdapter
+        headerTextAlignmentSpinner.setSelection(tempPreferences.headerTextAlignment.ordinal)
+        headerTextAlignmentSpinner.onItemSelectedListener =
+                object : AdapterView.OnItemSelectedListener {
+                    override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        tempPreferences.headerTextAlignment = Alignment.fromPosition(position)!!
+                        updateResetButtonVisibility()
+                        updateWidgetPreview()
+                    }
+                }
+
+        updateHeaderSettingsEnabledState()
     }
 
-    private fun updateHeaderButtonsEnabledState() {
+    private fun updateHeaderSettingsEnabledState() {
         val headerEnabled = tempPreferences.isHeaderEnabled
         addEventHeaderButtonToggle.isEnabled = headerEnabled
         refreshHeaderButtonToggle.isEnabled = headerEnabled
         settingsHeaderButtonToggle.isEnabled = headerEnabled
+        headerTextAlignmentSpinner.isEnabled = headerEnabled
     }
 
     private fun setupCalendarsSettings() {

@@ -114,6 +114,11 @@ class CalendarAppWidgetProvider : AppWidgetProvider() {
             val calendarPendingIntent =
                 PendingIntent.getActivity(context, appWidgetId, calendarIntent, 0)
             views.setOnClickPendingIntent(R.id.headerTitleView, calendarPendingIntent)
+            views.setInt(
+                R.id.headerTitleViewContainer,
+                "setGravity",
+                prefs.headerTextAlignment.gravity
+            )
 
             val addIntent = Intent(Intent.ACTION_INSERT)
                 .setData(CalendarContract.Events.CONTENT_URI)

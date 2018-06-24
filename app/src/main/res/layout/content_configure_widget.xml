@@ -27,6 +27,16 @@
         android:text="@string/header"
         tools:checked="true" />
 
+    <Spinner
+        android:id="@+id/headerTextAlignmentSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/header_alignments"
+        android:paddingBottom="12dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp" />
+
     <CheckBox
         android:id="@+id/addEventHeaderButtonToggle"
         style="@style/ButtonWithIndent"
