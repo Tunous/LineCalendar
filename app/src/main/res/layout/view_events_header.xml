@@ -22,6 +22,8 @@
             style="@style/TextWithShadow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingEnd="2dp"
+            android:paddingStart="2dp"
             android:textColor="@android:color/white"
             android:textStyle="bold"
             tools:text="Monday 13 June" />

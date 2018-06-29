@@ -16,7 +16,8 @@
         <activity
             android:name=".widget.configure.ConfigureWidgetActivity"
             android:launchMode="singleInstance"
-            android:theme="@style/AppTheme.Wallpaper">
+            android:theme="@style/AppTheme.Wallpaper"
+            android:windowSoftInputMode="stateHidden">
 
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
