@@ -3,6 +3,7 @@ package me.thanel.linecalendar.data.event
 import android.content.ContentUris
 import android.net.Uri
 import android.provider.CalendarContract
+import me.thanel.linecalendar.preference.DaysToShow
 import java.util.*
 
 object EventLoader {
@@ -22,11 +23,11 @@ object EventLoader {
     const val PROJECTION_START_TIME_INDEX = 4
     const val PROJECTION_ALL_DAY_INDEX = 5
 
-    fun getUri(): Uri {
+    fun getUri(daysToShow: DaysToShow): Uri {
         val startTime = Calendar.getInstance()
         val startMillis = startTime.timeInMillis
         val endTime = Calendar.getInstance().apply {
-            add(Calendar.DATE, 60)
+            add(Calendar.DATE, daysToShow.days)
         }
         val endMillis = endTime.timeInMillis
 

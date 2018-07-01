@@ -17,7 +17,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.github.florent37.runtimepermission.kotlin.askPermission
 import kotlinx.android.synthetic.main.activity_configure_widget.*
@@ -26,6 +25,7 @@ import me.thanel.linecalendar.R
 import me.thanel.linecalendar.data.calendar.CalendarListItem
 import me.thanel.linecalendar.data.calendar.CalendarLoader
 import me.thanel.linecalendar.preference.Alignment
+import me.thanel.linecalendar.preference.DaysToShow
 import me.thanel.linecalendar.preference.IndicatorStyle
 import me.thanel.linecalendar.preference.WidgetPreferences
 import me.thanel.linecalendar.widget.CalendarAppWidgetProvider
@@ -95,8 +95,9 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
     private fun setupSettingsViews() {
         setupNameSettings()
         setupHeaderSettings()
-        setupCalendarsSettings()
+        setupDataSettings()
         setupIndicatorSettings()
+        setupCalendarsSettings()
         updateResetButtonVisibility()
     }
 
@@ -151,15 +152,8 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
             updateWidgetPreview()
         }
 
-        val strings = resources.getTextArray(R.array.header_alignments)
-        val alignmentAdapter = ArrayAdapter<CharSequence>(
-            this,
-            R.layout.alignment_spinner_item,
-            android.R.id.text1,
-            strings
-        )
-        alignmentAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        headerTextAlignmentSpinner.adapter = alignmentAdapter
+        headerTextAlignmentSpinner.adapter =
+                SpinnerAdapter(this, R.array.header_alignments, R.string.title_alignment)
         headerTextAlignmentSpinner.setSelection(tempPreferences.headerTextAlignment.ordinal)
         headerTextAlignmentSpinner.onItemSelectedListener =
                 object : AdapterView.OnItemSelectedListener {
@@ -178,6 +172,32 @@ class ConfigureWidgetActivity : AppCompatActivity(), LoaderManager.LoaderCallbac
                 }
 
         updateHeaderSettingsEnabledState()
+    }
+
+    private fun setupDataSettings() {
+        daysToShowSpinner.apply {
+            adapter = SpinnerAdapter(
+                this@ConfigureWidgetActivity,
+                R.array.days_to_show,
+                R.string.title_day_to_show
+            )
+            setSelection(tempPreferences.daysToShow.ordinal)
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    tempPreferences.daysToShow = DaysToShow.fromPosition(position)!!
+                    updateResetButtonVisibility()
+//                    updateWidgetPreview() // TODO Update demo data based on setting
+                }
+            }
+        }
+
     }
 
     private fun updateHeaderSettingsEnabledState() {

@@ -6,6 +6,7 @@
     <string name="button_refresh">Display refresh button</string>
     <string name="button_settings">Display settings button</string>
     <string name="calendars">Calendars</string>
+    <string name="data">Data</string>
     <string name="grant_permission">Widget requires permission to read calendars.\nTap here to grant permission.</string>
     <string name="header">Header</string>
     <string name="hint_add_widget">You can add widgets from your launcher.</string>
@@ -19,5 +20,6 @@
     <string name="name">Name</string>
     <string name="no_events">You have no events</string>
     <string name="title_alignment">Title alignment</string>
+    <string name="title_day_to_show">Days to show</string>
     <string name="widget_name">Widget name</string>
 </resources>

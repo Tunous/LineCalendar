@@ -26,7 +26,7 @@ class CursorEventDataProvider(
 
         val selectedCalendars = preferences.selectedCalendarIds
         cursor = context.contentResolver.query(
-            EventLoader.getUri(),
+            EventLoader.getUri(preferences.daysToShow),
             EventLoader.PROJECTION,
             EventLoader.getSelection(selectedCalendars),
             EventLoader.getSelectionArgs(selectedCalendars),

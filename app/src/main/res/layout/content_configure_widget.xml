@@ -62,6 +62,22 @@
         style="@style/PreferenceHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="@string/data" />
+
+    <Spinner
+        android:id="@+id/daysToShowSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/days_to_show"
+        android:paddingBottom="12dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp" />
+
+    <TextView
+        style="@style/PreferenceHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/indicator_style" />
 
     <RadioGroup

@@ -29,4 +29,6 @@ class WidgetPreferences(
     var showSettingsHeaderButton: Boolean by bindPreference("showSettingsHeaderButton", true)
 
     var headerTextAlignment: Alignment by bindPreference("headerTextAlignment", Alignment.Start)
+
+    var daysToShow: DaysToShow by bindPreference("daysToShow", DaysToShow.Month)
 }
