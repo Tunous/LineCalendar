@@ -22,7 +22,10 @@ A minimalistic calendar events widget for Android.
 
 ## Screenshots
 
-TODO
+<img src="./art/Screenshot_1530268349.png" height="580" />
+<img src="./art/Screenshot_1530268380.png" height="580" />
+<img src="./art/Screenshot_1530268443.png" height="580" />
+<img src="./art/Screenshot_1530268495.png" height="580" />
 
 ## License
 
